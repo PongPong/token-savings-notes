@@ -37,50 +37,55 @@
 - Still: no invented quotes/numbers; mark % claims self-reported.
 
 ## 1. Top patterns (5–10)
+Sorted by **rough savings impact** (high → low). Stars = impact estimate from attributed NOTES evidence (not a lab score). Say “practitioners report…” — do not guarantee %.
 
-### 1. Context compaction (`/compact`, mid-session summarize)
-**What people do:** Summarize history on purpose. Keep decisions, active errors, files in scope, constraints. Drop resolved logs and dead tangents.  
-**Why it saves:** Full history is resent every turn. A shorter summary cuts the recurring re-read tax.  
-**Practice tip:** Compact ~60% utilization (not at 95%). Auto-compact near the ceiling often summarizes already-degraded context.
+### 1. MCP / tool hygiene (fewer tools, short schemas, defer load) — ★★★★★ (5/5)
+**Impact (why 5/5):** Largest easy win: schema cuts ~60% (Spence), Tool Search ~85% internal, idle MCP tens of k.
+**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.  
+**Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
-### 2. Context pruning (drop tool exhaust first; summarize last)
-**What people do:** Remove stale tool outputs, duplicate file reads, old errors *before* LLM summarization. OpenCode DCP: dedup + purge + optional compress. Atlassian Rovo Dev: structure-aware prune cascade.  
-**Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Summary is the fallback.
 
-### 3. Fresh session / `/clear` per unrelated task
+### 2. Fresh session / `/clear` per unrelated task — ★★★★☆ (4/5)
+**Impact (why 4/5):** Community ~30–50% per-message; stops dead-context rent. Caveat: same task may prefer warm cache.
 **What people do:** New chat when the task changes. Keep related phases in one session. Put durable rules in CLAUDE.md / AGENTS.md.  
 **Why it saves:** Stale history rides every turn. Clearing stops paying rent on dead context.  
 **Caveat:** Within one task, a warm cache can make one long session cheaper than many cold restarts (see caching).
 
-### 4. MCP / tool hygiene (fewer tools, short schemas, defer load)
-**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — see pattern 10) can beat many low-signal file tools — still disable everything else you are not using this session.  
-**Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
-### 5. Lean standing instructions (short CLAUDE.md / AGENTS.md; skills on demand)
-**What people do:** Keep always-on rules thin (phonebook, not manual). Move domain packs into skills that load when triggered.  
-**Why it saves:** Always-on files tax *every* turn (even with cache, still a recurring cost). On-demand skills avoid that baseline.
-
-### 6. Cheap-model routing (small for triage / explore; big for hard steps)
+### 3. Cheap-model routing (small for triage / explore; big for hard steps) — ★★★★☆ (4/5)
+**Impact (why 4/5):** Quota/price lever (anshuc 40–70% self-reported; Terra −49% cost). Cold-boundary only.
 **What people do:** Haiku / Luna / Gemini for search, plans, scaffolding. Opus / Astra / Sonnet for hard coding and irreversible work. Route at session or cold boundaries — not every turn.  
 **Why it saves:** Frontier rates on grep/rename/test-scaffold waste money.  
 **Caveat:** Mid-session model switches bust prompt cache; uncached cheap can beat cached frontier only if measured.
 
-### 7. Subagents / specialized workers (isolate noise; return summaries)
-**Cases:** See **Case studies: one agent vs multi-agent orchestration** (when one agent wins vs cheap orch + strong leaf vs Explore/Haiku).
-**What people do:** Spawn workers with clean context for search/research. Parent keeps only the answer. Cheap orchestrator + expensive coding worker is a common Codex pattern (@anshuc).  
-**Why it saves (parent):** Exploration junk stays out of the main window.  
-**Caveat:** Each subagent re-pays prompts/tools. Anthropic-cited ~7× for heavy fan-out. Use when isolation value > startup cost.
 
-### 8. Short / STE100-style output (cut narration tokens)
-**What people do:** Concise output style; “lead with result, no preamble”; ASD-STE100-style short sentences for status.  
-**Why it saves:** Output tokens are sequential and often priced higher than input. Less chat wrapper = less decode cost.  
-**Caveat:** STE100 is clarity-first; gists note it is not a hard length cap on the whole reply.
+### 4. Lean standing instructions (short CLAUDE.md / AGENTS.md; skills on demand) — ★★★★☆ (4/5)
+**Impact (why 4/5):** ~2–3k tokens/turn avoided when skills stay unloaded (Verma self-reported).
+**What people do:** Keep always-on rules thin (phonebook, not manual). Move domain packs into skills that load when triggered.  
+**Why it saves:** Always-on files tax *every* turn (even with cache, still a recurring cost). On-demand skills avoid that baseline.
 
-### 9. Prompt-caching hygiene (stable prefix; don’t break it)
+
+### 5. Prompt-caching hygiene (stable prefix; don’t break it) — ★★★★☆ (4/5)
+**Impact (why 4/5):** Cache reads ~10% of input price; one bust forces full-price re-read.
 **What people do:** Static system + tools first. Dynamic stuff in messages. Don’t shuffle tools or swap models mid-session. Cache-safe compaction forks.  
 **Why it saves:** Cache reads ~10% of input price. One prefix byte change can force full-price re-read of the whole history.
 
-### 10. Targeted exploration (narrow @files; stop early; shrink shell output)
+
+### 6. Context compaction (`/compact`, mid-session summarize) — ★★★☆☆ (3/5)
+**Impact (why 3/5):** Cuts recurring history tax; no universal %. Compact ~60% util.
+**What people do:** Summarize history on purpose. Keep decisions, active errors, files in scope, constraints. Drop resolved logs and dead tangents.  
+**Why it saves:** Full history is resent every turn. A shorter summary cuts the recurring re-read tax.  
+**Practice tip:** Compact ~60% utilization (not at 95%). Auto-compact near the ceiling often summarizes already-degraded context.
+
+
+### 7. Context pruning (drop tool exhaust first; summarize last) — ★★★☆☆ (3/5)
+**Impact (why 3/5):** Mechanical prune is free; no single published %.
+**What people do:** Remove stale tool outputs, duplicate file reads, old errors *before* LLM summarization. OpenCode DCP: dedup + purge + optional compress. Atlassian Rovo Dev: structure-aware prune cascade.  
+**Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Summary is the fallback.
+
+
+### 8. Targeted exploration (narrow @files; stop early; shrink shell output) — ★★★☆☆ (3/5)
+**Impact (why 3/5):** Stops junk entering the prefix; tool claims vary (RTK disputed; graph MCP self-reported).
 **What people do:** Point at paths. Prefer indexed / structural search over full-file dumps. Explicit stop rules in AGENTS.md. Concrete tools practitioners use:
 
 - **[RTK](https://github.com/RTK-AI/rtk) (Rust Token Killer)** — wrap shell / CLI output so the agent gets a compressed form (`rtk git status`, hooks rewrite Bash). Use after choosing the right tool; do not let RTK pick the tool. Built-in `Read`/`Grep` often bypass the Bash hook.
@@ -88,6 +93,20 @@
 - **[codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)** — MCP that builds a local code knowledge graph (tree-sitter + optional Hybrid LSP). Structural / graph queries replace dozens of grep+read cycles. Authors claim large token cuts vs file-by-file exploration (see sources; mark self-reported). Prefer this *instead of* blind full-repo greps when installed — still subject to MCP hygiene (don’t pile unrelated MCP servers beside it).
 
 **Why it saves:** Wrong exploration pins junk into the prefix forever. Stopping early and returning only useful hits avoids the re-read tax.
+### 9. Short / STE100-style output (cut narration tokens) — ★★☆☆☆ (2/5)
+**Impact (why 2/5):** Output/narration only; no solid STE100 total-token %. Softens decode cost.
+**What people do:** Concise output style; “lead with result, no preamble”; ASD-STE100-style short sentences for status.  
+**Why it saves:** Output tokens are sequential and often priced higher than input. Less chat wrapper = less decode cost.  
+**Caveat:** STE100 is clarity-first; gists note it is not a hard length cap on the whole reply.
+
+
+### 10. Subagents / specialized workers (isolate noise; return summaries) — ★★☆☆☆ (2/5)
+**Impact (why 2/5):** Parent-context win; heavy fan-out can cost ~7× total tokens — use selectively.
+**Cases:** See **Case studies: one agent vs multi-agent orchestration** (when one agent wins vs cheap orch + strong leaf vs Explore/Haiku).
+**What people do:** Spawn workers with clean context for search/research. Parent keeps only the answer. Cheap orchestrator + expensive coding worker is a common Codex pattern (@anshuc).  
+**Why it saves (parent):** Exploration junk stays out of the main window.  
+**Caveat:** Each subagent re-pays prompts/tools. Anthropic-cited ~7× for heavy fan-out. Use when isolation value > startup cost.
+
 
 ---
 
@@ -141,7 +160,7 @@
 - Local “token savers” can raise the *trajectory* bill. Measure your own tasks (bisonbear2).
 
 **One-liner ranking for slides:**  
-MCP hygiene → clear/fresh sessions → lean standing docs → compact/prune → short output → smart routing → selective subagents → cache hygiene.
+MCP hygiene → clear/fresh → cheap routing → lean docs → cache hygiene → compact/prune → targeted explore → short output → selective subagents.
 
 ---
 
