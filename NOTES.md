@@ -117,6 +117,7 @@
 - Point at files. Prefer tgrep / graph MCP / `rg` over full dumps; wrap shell with RTK. Stop when evidence is enough.
 - Protect the prompt-cache prefix. Stable tools and rules first.
 - Measure with `/context` and cache-hit logs. Anecdotes ≠ your bill.
+- Local “token savers” can raise the *trajectory* bill. Measure your own tasks (bisonbear2).
 
 **One-liner ranking for slides:**  
 MCP hygiene → clear/fresh sessions → lean standing docs → compact/prune → short output → smart routing → selective subagents → cache hygiene.
@@ -126,7 +127,7 @@ MCP hygiene → clear/fresh sessions → lean standing docs → compact/prune �
 ## 4. Caveats — anecdotes vs measured; conflicts
 
 ### Anecdotes / self-reported (do not present as universal law)
-- RTK: vendor demos claim large Bash-output cuts; independent cost benchmarks (JetBrains, Quesma) often show ~0% bill savings or slight cost *increase* — do not cite 60–90% as proven.
+- RTK: vendor demos claim large Bash-output cuts; JetBrains/Quesma and u/bisonbear2 (Reddit 1v9xjh0: RTK **+5%** total tokens geom. mean, more tool calls) — do not cite 60–90% as proven bill savings.
 - codebase-memory-mcp: 10× / 99.2% token claims are author/preprint — verify before deck guarantees.
 - @anshuc 80–90% then corrected to 40–70%; Plus-quota demo 50% vs 7%.
 - Shuttle 45k autocompact buffer; Scott Spence 60% MCP schema cut; Verma ~2–3k/turn; Hasan $74→$11 / ~80% combined.
@@ -1017,6 +1018,36 @@ Paste-ready for TokenScout NOTES (Pong L). STE100-style. Every figure attributed
 | 省token / Haiku explore / 产出多复用少 | CN practitioner + docs | https://juejin.cn/post/7644429323654529024 |
 
 **Conflicts already in NOTES §4:** Subagents save *parent* context but can raise *total* tokens; cheap per-turn routers can raise spend vs cold-boundary handoff.
+
+
+## Measured study: five “token saving” modes (u/bisonbear2, 2026)
+
+**Source:** [r/ClaudeAI — I tested 5 popular token saving methods…](https://www.reddit.com/r/ClaudeAI/comments/1v9xjh0/i_tested_5_popular_token_saving_methods_across_10/) · fuller write-up [stet.sh](https://www.stet.sh/blog/gpt-56-token-saving-modes) · author **u/bisonbear2** (building Stet; disclosed). Snapshot also via [sentinel](https://reddit.sentinel-team.org/posts/1v9xjh0/snapshots/2026-07-30T01%3A30%3A02.254894Z).
+
+**Setup (author-reported):** Codex **5.6 Sol** baseline (medium effort) vs six arms on **10** real merged-task replays from one repo; **2** full repeats → **140** agent runs. Graded tests, equivalence, code review, footprint, eight quality dims. Author notes Codex stack but argues transfer to Claude-style agents. **n=2 repeats** — treat as one practitioner measurement, not a meta-analysis.
+
+| Mode | What it is | Total tokens (geom. mean Δ) | Cost Δ | Saved in both runs? |
+| --- | --- | ---: | ---: | --- |
+| Caveman | terse “caveman” interaction | −2% | −2% | No |
+| Ponytail | lazy senior / YAGNI / min output | +7% | +9% | No |
+| RTK | compress shell command output | +5% | +1% | No |
+| Context Mode | batch/index retrieval; return judged-relevant slices | +68% | +51% | No |
+| Mandarin | denser Chinese prompt translation | +46% | +36% | No |
+| Terra xhigh | cheaper model, higher reasoning | +6% | **−49%** | Cost only |
+
+**Headline (author):** none of the six cut total tokens in *both* runs; five *increased* average total tokens. Context Mode worst (+68%). Only consistent **dollar** cut was Terra xhigh (−49% cost) while using slightly *more* tokens.
+
+**Behavior findings (blend into patterns):**
+- **Output compression ≠ workload compression.** Local savings (shorter replies, thinner CLI output, cheaper retrieval) often change search / validation / patch policy so the *trajectory* bill rises.
+- **RTK (pattern 10):** individual commands smaller; agent issued **more** tools (avg **60** vs baseline **49**) and ~2× wall time — aligns with JetBrains/Quesma “disputed bill savings.”
+- **Caveman / Ponytail (pattern 8 STE100/concise):** average near-flat or higher total tokens; quality hits on **robustness** / **scope** (graders). Ponytail cut *output* tokens both runs (−3%, −11%) but total tokens still +16% / −1%.
+- **Context Mode:** cheap structured retrieval → agent gathered/revisited *more* context (quantity demanded↑). Commenters: may fit as a **scoped retrieval subagent**, not a global session saver.
+- **Mandarin denser language:** not a free token win; changed decomposition/delegation; trajectory cost dominated. Commenter note: English droppable scaffolding ≠ agglutinative languages.
+- **Terra / cheap strong-effort model (pattern 6):** wins on **price**, not token count — same family as cheap-leaf / cold-boundary routing.
+
+**Quote:** “The bill is for the whole trajectory, not the local surface.” / “Output compression is not workload compression.”
+
+**Deck use:** cite as **measured caution** against installing “token saver” wrappers as automatic wins. Prefer replay-your-own-tasks. Do not present −49% Terra as fewer tokens.
 
 ## Gaps
 
