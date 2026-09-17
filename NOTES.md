@@ -967,7 +967,7 @@ Paste-ready for TokenScout NOTES (Pong L). STE100-style. Every figure attributed
 
 ---
 
-## STE100 bullets (deck)
+### STE100 bullets (deck)
 
 - One agent wins for sequential, dependent, or tiny work.
 - Multi wins when noise would pollute the parent, or work is truly parallel.
@@ -982,7 +982,7 @@ Paste-ready for TokenScout NOTES (Pong L). STE100-style. Every figure attributed
 
 ---
 
-## Decision cheat sheet
+### Decision cheat sheet
 
 | Situation | Prefer | Why |
 | --- | --- | --- |
@@ -999,7 +999,7 @@ Paste-ready for TokenScout NOTES (Pong L). STE100-style. Every figure attributed
 
 ---
 
-## Attribution map (do not drop)
+### Attribution map (do not drop)
 
 | Claim | Kind | Primary URL |
 | --- | --- | --- |
