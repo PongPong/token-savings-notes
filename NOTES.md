@@ -120,6 +120,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Pick:** Graphify when the corpus mixes **docs + code**; codebase-memory-mcp when you need **deep code-structure / type-aware** graph queries. Both still count as MCP/skill surface area — keep other unused servers off (pattern: MCP hygiene).
 
 **Why it saves:** Wrong exploration pins junk into the prefix forever. Stopping early and returning only useful hits avoids the re-read tax.
+
 ### 9. Short / STE100-style output (cut narration tokens) — ★★☆☆☆ (2/5)
 **Impact (why 2/5):** Output/narration only; no solid STE100 total-token %. Softens decode cost.
 **What people do:** Concise output style; “lead with result, no preamble”; ASD-STE100-style short sentences for status.  
