@@ -10,9 +10,10 @@
 
 
 
+
+
 ## Contents
 
-- [Scout policy (standing)](#scout-policy-standing)
 - [1. Top patterns (5–10)](#1-top-patterns-5-10)
 - [2. Named sources — handle + link + short quote](#2-named-sources-handle-link-short-quote)
 - [3. Slide bullets (STE100-style)](#3-slide-bullets-ste100-style)
