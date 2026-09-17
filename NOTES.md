@@ -1,4 +1,4 @@
-# TokenScout research pack — cut LLM/agent token spend
+# Token-savings research pack — cut LLM/agent token spend
 
 **For:** Engineer / Pong L presentation  
 **Prepared:** 17 Sep 2026 (Europe/London)  
@@ -546,7 +546,7 @@ Search around, figure out what's causing this, and tell me the plan. Don't write
 ```
 
 ### (house — Pong) Dense edits + deterministic format once
-**Source:** house rule (Pong L / TokenScout, 2026-09-17) — short prompt form of P.1; not previously present as a fenced prompt block
+**Source:** house rule (Pong L, 2026-09-17) — short prompt form of P.1; not previously present as a fenced prompt block
 
 ```text
 During multi-file edits: emit dense patches (minimal cosmetic whitespace; keep language-required indent). Do not pretty-print or "clean up style" in the model.
@@ -559,7 +559,7 @@ Never reformat by hand in the model. Prefer patch/hunk edits over full-file rewr
 
 
 ### More copy-paste prompts (MCP / clear / compact / routing / AGENTS)
-From TokenScout draft — categories not duplicated in the STE100/formatter blocks above. Labels: verbatim vs paraphrased.
+From earlier draft — categories not duplicated in the STE100/formatter blocks above. Labels: verbatim vs paraphrased.
 
 ### 3. MCP hygiene
 
@@ -819,7 +819,7 @@ Locate first, read second. Extract with jq/yq instead of loading whole documents
 - **When:** Starter lean AGENTS.md (~20 lines) for multi-harness installs.
 
 - **Label:** house
-- **Source:** TokenScout NOTES.md Practical P.3 (formatter handshake only)
+- **Source:** NOTES.md Practical P.3 (formatter handshake only)
 - **Prompt:**
 ```markdown
 ## Formatter handshake
@@ -841,7 +841,7 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 
 ## Case studies: one agent vs multi-agent orchestration
 
-Paste-ready for TokenScout NOTES (Pong L). STE100-style. Every figure attributed. No invented %. Expand Pattern 7 / §6 — do not duplicate full essays.
+Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No invented %. Expand Pattern 7 / §6 — do not duplicate full essays.
 
 **How to read:** Verdict = preferred shape for *that* scenario. Isolation ≠ cheaper system-wide. Mark **self-reported** / **measured** / **official** as labeled.
 
