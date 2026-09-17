@@ -44,6 +44,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Dense edit + format-once CLI | No public % | House rule | Stops format loops |
 | RTK (shell compress) | Vendor **60–90%** of *command output*; bill often **~0 / +5%** | Vendor vs JetBrains/Quesma/bisonbear2 **disputed** | Don’t cite 60–90% as bill |
 | codebase-memory-mcp | Author **10×** / **~99%** vs file-by-file explore | Preprint / README **self-reported** | Verify on your harness |
+| Graphify (knowledge graph skill) | Query graph instead of grepping; code AST map uses **0** LLM credits (README benchmark table) | Graphify README / BENCHMARKS — **no total-session token %** | Prefer when docs+code; compare vs codebase-memory-mcp below |
 | tgrep vs rg | Up to **~52×** faster (latency) | microsoft/tgrep benches | Token win is indirect |
 | Agent Teams / heavy subagent fan-out | **~7× more** tokens; small fan-out **2.6×–5.9× more** | Anthropic **official**; Systima **measured** | Savings = *avoid* this |
 | Stacked levers (MCP + clear + terse + …) | Combined “**~80%**” / $74→$11 weekends | Hasan **self-reported** | Not transferable as a guarantee |
@@ -55,7 +56,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 
 ### 1. MCP / tool hygiene (fewer tools, short schemas, defer load) — ★★★★★ (5/5)
 **Impact (why 5/5):** Largest easy win: schema cuts ~60% (Spence), Tool Search ~85% internal, idle MCP tens of k.
-**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.  
+**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) or [Graphify](https://github.com/Graphify-Labs/graphify) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.  
 **Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
 
@@ -105,6 +106,18 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 - **[RTK](https://github.com/RTK-AI/rtk) (Rust Token Killer)** — wrap shell / CLI output so the agent gets a compressed form (`rtk git status`, hooks rewrite Bash). Use after choosing the right tool; do not let RTK pick the tool. Built-in `Read`/`Grep` often bypass the Bash hook.
 - **[tgrep](https://github.com/microsoft/tgrep)** — trigram-indexed grep (client/server) as a **ripgrep/grep replacement** on large trees. Index once (`tgrep serve .`); agents should prefer `tgrep` for repo search when the index is warm (see repo `AGENTS.md`). Speed win on huge monorepos; token win is indirect (faster, tighter search → fewer thrash reads).
 - **[codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)** — MCP that builds a local code knowledge graph (tree-sitter + optional Hybrid LSP). Structural / graph queries replace dozens of grep+read cycles. Authors claim large token cuts vs file-by-file exploration (see sources; mark self-reported). Prefer this *instead of* blind full-repo greps when installed — still subject to MCP hygiene (don’t pile unrelated MCP servers beside it).
+- **[Graphify](https://github.com/Graphify-Labs/graphify)** (`Graphify-Labs/graphify`) — `/graphify` skill maps code (+ docs/PDFs/media) into a **queryable knowledge graph** so the agent can query the graph instead of grepping files. Code path: local tree-sitter AST (deterministic, no LLM credits for code map per README). Docs/media may use a semantic pass. Not a vector index. Install: `uv tool install graphifyy` then `graphify install`. No universal token-% in README — savings mechanism is fewer file crawls.
+
+**Graphify vs codebase-memory-mcp (feature comparison — Pong, 2026-09-17):**
+
+| Feature | Graphify | codebase-memory-mcp |
+| --- | --- | --- |
+| Primary scope | Multi-modal (code, PDFs, docs, DB schemas) | Code-first with deep structural and type analysis |
+| Parsing & language layer | Local tree-sitter (36 languages / 79 extensions per comparison card) | Hybrid LSP + tree-sitter (stronger TS/JSX resolution per comparison card) |
+| Query mechanism | Direct assistant mapping / integrated context retrieval (`/graphify`, `graphify query` / path / explain) | Cypher-style / graph query engine for arbitrary traversals (15 MCP tools) |
+| Best used for | Projects that need docs, specs, and code mapped together | Deep programmatic code queries, dead-code detection, precise TS typing |
+
+**Pick:** Graphify when the corpus mixes **docs + code**; codebase-memory-mcp when you need **deep code-structure / type-aware** graph queries. Both still count as MCP/skill surface area — keep other unused servers off (pattern: MCP hygiene).
 
 **Why it saves:** Wrong exploration pins junk into the prefix forever. Stopping early and returning only useful hits avoids the re-read tax.
 ### 9. Short / STE100-style output (cut narration tokens) — ★★☆☆☆ (2/5)
@@ -335,6 +348,7 @@ MCP hygiene → clear/fresh → cheap routing → lean docs → cache hygiene �
 ### Anecdotes / self-reported (do not present as universal law)
 - RTK: vendor demos claim large Bash-output cuts; JetBrains/Quesma and u/bisonbear2 (Reddit 1v9xjh0: RTK **+5%** total tokens geom. mean, more tool calls) — do not cite 60–90% as proven bill savings.
 - codebase-memory-mcp: 10× / 99.2% token claims are author/preprint — verify before deck guarantees.
+- Graphify: strong “query instead of grep” claim; code AST map billed as 0 LLM credits in their bench — still measure total session tokens on your harness.
 - @anshuc 80–90% then corrected to 40–70%; Plus-quota demo 50% vs 7%.
 - Shuttle 45k autocompact buffer; Scott Spence 60% MCP schema cut; Verma ~2–3k/turn; Hasan $74→$11 / ~80% combined.
 - Aakash Gupta / Anthropic internal Tool Search 134k→5k (85%) — via VentureBeat, not a peer paper.
@@ -1076,6 +1090,7 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 | RTK (Rust Token Killer) | https://github.com/RTK-AI/rtk · Ammar Najjar toolkit https://ammar-najjar.com/blog/local-ai-coding-toolkit/ | Compresses shell/CLI output before it hits the agent; “Choose the right tool → run through RTK → return only useful output.” README / demos claim large Bash-output cuts. | Vendor demo claims often 60–90% on *command output*; JetBrains / Quesma benchmarks find little or no **bill** savings (hook misses Read/Grep; ~≤3% input ceiling) — treat as **disputed** |
 | microsoft/tgrep | https://github.com/microsoft/tgrep | “Tools like `grep` and `ripgrep` scan every file on every search… tgrep pre-builds a trigram index so searches only touch the small set of files that could match.” Used as grep replacement for agents (repo `AGENTS.md`; Copilot CLI integration). | Latency up to ~52× vs ripgrep on large repos (project benchmarks); no universal token-% claim |
 | DeusData/codebase-memory-mcp | https://github.com/DeusData/codebase-memory-mcp · arXiv:2603.27277 | “10× fewer tokens, 2.1× fewer tool calls vs. file-by-file exploration” (31 repos). README: five structural queries “~3,400 tokens vs ~412,000” (**99.2%** reduction claim). | **Self-reported / preprint**; verify on your harness |
+| Graphify Labs | https://github.com/Graphify-Labs/graphify | “maps your entire project (code, docs, PDFs, images, videos) into a knowledge graph you can query instead of grepping through files.” Code: local tree-sitter; “LLM credits **0**” for graph build vs per-token systems (benchmark table). | no universal session-token %; code-map credits **0** (author bench) |
 
 ---
 
@@ -1085,6 +1100,8 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 - [How to Use the /compact Command… (MindStudio)](https://www.mindstudio.ai/blog/claude-code-compact-command-context-management) — 2 Apr 2026 — blog  
 - [Agent Context Pruning · Atlassian Rovo Dev](https://www.atlassian.com/blog/development/rovo-dev-keeps-long-sessions-useful) — 30 Mar 2026 — blog  
 - [opencode-dynamic-context-pruning](https://github.com/opencode-dcp/opencode-dynamic-context-pruning) — GitHub  
+- [Graphify](https://github.com/Graphify-Labs/graphify) — GitHub (knowledge graph skill)  
+- [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — GitHub  
 - [Claude Code MCP Tool Search · VentureBeat](https://venturebeat.com/orchestration/claude-code-just-got-updated-with-one-of-the-most-requested-user-features) — 15 Jan 2026 — news (cites @Thariq / @AakashGupta / Boris Cherny on X)  
 - [Optimising MCP Server Context Usage · Scott Spence](https://scottspence.com/posts/optimising-mcp-server-context-usage-in-claude-code) — 30 Sep 2025 — blog  
 - [Filter MCP tools · Cursor forum](https://forum.cursor.com/t/add-the-possibility-to-filter-mcp-tools/76776) — Apr–May 2025 — forum  
