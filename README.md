@@ -17,4 +17,4 @@ Canonical source of truth: this private repo. Do not invent savings %. Mark self
 
 ## Maintenance
 
-Engineer Monday ~09:00 Europe/London refresh. TokenScout scouts X/web and reports new handles/quotes only.
+Engineer Monday ~09:00 Europe/London refresh. Weekly X/web scout reports new handles/quotes only.
