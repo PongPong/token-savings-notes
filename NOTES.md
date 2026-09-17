@@ -8,6 +8,25 @@
 ---
 
 
+
+## Contents
+
+- [Scout policy (standing)](#scout-policy-standing)
+- [1. Top patterns (5–10)](#1.-top-patterns-510)
+- [2. Named sources — handle + link + short quote](#2.-named-sources-handle-link-short-quote)
+- [3. Slide bullets (STE100-style)](#3.-slide-bullets-ste100-style)
+- [4. Caveats — anecdotes vs measured; conflicts](#4.-caveats-anecdotes-vs-measured-conflicts)
+- [5. Optional — 1-page speaker notes](#5.-optional-1-page-speaker-notes)
+- [Source list (markdown)](#source-list-markdown)
+- [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
+- [Example prompts (real-world)](#example-prompts-real-world)
+- [Case studies: one agent vs multi-agent orchestration](#case-studies-one-agent-vs-multi-agent-orchestration)
+- [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-u/bisonbear2-2026)
+- [Savings cheat sheet (rough figures)](#savings-cheat-sheet-rough-figures)
+- [Gaps](#gaps)
+- [X primary delta (17 Sep 2026 browser pass)](#x-primary-delta-17-sep-2026-browser-pass)
+- [Team practice (standing)](#team-practice-standing)
+
 ## Scout policy (standing)
 
 - Prefer **creditable** X/Twitter accounts only (known practitioners, product teams, researchers, established creators). Skip anonymous engagement bait.
@@ -1049,6 +1068,33 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 
 **Deck use:** cite as **measured caution** against installing “token saver” wrappers as automatic wins. Prefer replay-your-own-tasks. Do not present −49% Terra as fewer tokens.
 
+
+## Savings cheat sheet (rough figures)
+
+Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **not** guarantee %.
+
+| Technique | Rough savings (as reported) | Evidence | Notes |
+| --- | --- | --- | --- |
+| MCP hygiene (disable / consolidate / Tool Search) | Schema cut **~60%** (14k→5.7k); Tool Search **~85%** (134k→5k); idle MCP **4–10k** or **67k+** with many servers; PostHog **113k→5k** single exec | Spence **self-measured**; Tool Search **Anthropic internal** via VB; Shuttle / staff / PostHog **self-reported** | Usually the biggest *easy* win |
+| Lean AGENTS.md / skills on demand | **~2–3k tokens/turn** when skill not loaded | Verma **self-reported** | Always-on tax every turn |
+| `/clear` / new session (unrelated task) | **~30–50%** per-message (community); one case **412k** cleared | Atticus **attributed**; @jcfmunoz **self-reported** | Same task may prefer warm cache |
+| `/compact` ~60% util (not 95%) | No universal %; Shuttle autocompact buffer example 45k→176k free | MindStudio tip; Shuttle **self-reported** | Quality lever more than a fixed % |
+| Context prune before LLM summary (DCP etc.) | No universal %; cache-hit notes ~85% vs ~90% | DCP docs ecosystem | Free mechanical prune first |
+| STE100 / Concise / terse output | **No STE100 %**; terse output **30–50%** of *output*; Concise article **40–60%** output | Hasan / @ellen_in_sf **self-reported**; STE100 gists **no figure** | Cuts narration, not whole bill |
+| Cheap orch + strong leaf | Quota **40–70%** (was 80–90%); demo **50%→7%** weekly Plus | @anshuc **self-reported**, author-corrected | Premium-quota shape |
+| Haiku/cheap Explore leaf (vs inherit Opus) | **~37%** fewer metered tokens (one pair) | Systima **measured** n=1 | Pin leaf model |
+| Cheap plan → clear → strong implement | No single %; Terra-style **−49% cost** / **+6% tokens** | Shuttle; bisonbear2 **measured** | Price ≠ fewer tokens |
+| Prompt-cache hygiene | Cache reads ~**10%** of input price; mid-session model switch can **raise** cost | Anthropic | Protect prefix |
+| Parent + Explore (summary only) | No %; parent context win | Official docs | Total tokens may still rise |
+| Dense edit + format-once CLI | No public % | House rule | Stops format loops |
+| RTK (shell compress) | Vendor **60–90%** of *command output*; bill often **~0 / +5%** | Vendor vs JetBrains/Quesma/bisonbear2 **disputed** | Don’t cite 60–90% as bill |
+| codebase-memory-mcp | Author **10×** / **~99%** vs file-by-file explore | Preprint / README **self-reported** | Verify on your harness |
+| tgrep vs rg | Up to **~52×** faster (latency) | microsoft/tgrep benches | Token win is indirect |
+| Agent Teams / heavy subagent fan-out | **~7× more** tokens; small fan-out **2.6×–5.9× more** | Anthropic **official**; Systima **measured** | Savings = *avoid* this |
+| Stacked levers (MCP + clear + terse + …) | Combined “**~80%**” / $74→$11 weekends | Hasan **self-reported** | Not transferable as a guarantee |
+
+**Footer:** Isolation ≠ cheaper system-wide. Measure with `/context` and your own replays.
+
 ## Gaps
 
 - **X.com / Twitter primary access:** WebSearch `site:x.com` empty; X search URLs redirect to login. Browser could open individual public posts (17 Sep 2026 pass). Nitter mirrors failed. See **X primary delta** below.
@@ -1079,7 +1125,7 @@ X search URLs all hit login. Individual public posts stayed readable. Nitter fal
 **Slide-worthy adds:** @posthog MCP 113k→5k; @jcfmunoz `/clear` 412K; @bcherny auto-compact is reliability not cost; @meta_alchemist 70–80% (self-reported); @ellen_in_sf 40–60% output.
 
 ---
-**Maintenance:** Weekly refresh by Engineer (Monday ~09:00 Europe/London). Last baseline: 2026-09-17. Practical examples added 2026-09-17 (format-once + dense edits). X primary delta merged 2026-09-17. Example prompts (real-world) section added 2026-09-17; categories 3–7 (MCP/clear/compact/routing/AGENTS) merged same day (Crushing C.O.D.E STE100, toppa/L1nefeed gists, Prettier handshake, Concise CLAUDE.md, OpenCode compaction, Shuttle plan.md, Atticus plan quote, house—Pong). Source of truth: private GitHub `PongPong/token-savings-notes` (mirror: `/workspace/token-scout/NOTES.md`).
+**Maintenance:** Weekly refresh by Engineer (Monday ~09:00 Europe/London). Last baseline: 2026-09-17. Practical examples added 2026-09-17 (format-once + dense edits). X primary delta merged 2026-09-17. Example prompts (real-world) section added 2026-09-17; categories 3–7 (MCP/clear/compact/routing/AGENTS) merged same day (Crushing C.O.D.E STE100, toppa/L1nefeed gists, Prettier handshake, Concise CLAUDE.md, OpenCode compaction, Shuttle plan.md, Atticus plan quote, house—Pong). Savings cheat sheet + TOC added 2026-09-17. Source of truth: private GitHub `PongPong/token-savings-notes` (mirror: `/workspace/token-scout/NOTES.md`).
 
 
 ## Team practice (standing)
