@@ -32,7 +32,7 @@
 **Caveat:** Within one task, a warm cache can make one long session cheaper than many cold restarts (see caching).
 
 ### 4. MCP / tool hygiene (fewer tools, short schemas, defer load)
-**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand.  
+**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — see pattern 10) can beat many low-signal file tools — still disable everything else you are not using this session.  
 **Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
 ### 5. Lean standing instructions (short CLAUDE.md / AGENTS.md; skills on demand)
@@ -59,8 +59,13 @@
 **Why it saves:** Cache reads ~10% of input price. One prefix byte change can force full-price re-read of the whole history.
 
 ### 10. Targeted exploration (narrow @files; stop early; shrink shell output)
-**What people do:** Point at paths. Prefer `rg`/`fd` over full-file dumps. Compress CLI output (e.g. RTK). Explicit stop rules in AGENTS.md.  
-**Why it saves:** Wrong exploration pins junk into the prefix forever. Stopping early avoids the re-read tax.
+**What people do:** Point at paths. Prefer indexed / structural search over full-file dumps. Explicit stop rules in AGENTS.md. Concrete tools practitioners use:
+
+- **[RTK](https://github.com/RTK-AI/rtk) (Rust Token Killer)** — wrap shell / CLI output so the agent gets a compressed form (`rtk git status`, hooks rewrite Bash). Use after choosing the right tool; do not let RTK pick the tool. Built-in `Read`/`Grep` often bypass the Bash hook.
+- **[tgrep](https://github.com/microsoft/tgrep)** — trigram-indexed grep (client/server) as a **ripgrep/grep replacement** on large trees. Index once (`tgrep serve .`); agents should prefer `tgrep` for repo search when the index is warm (see repo `AGENTS.md`). Speed win on huge monorepos; token win is indirect (faster, tighter search → fewer thrash reads).
+- **[codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)** — MCP that builds a local code knowledge graph (tree-sitter + optional Hybrid LSP). Structural / graph queries replace dozens of grep+read cycles. Authors claim large token cuts vs file-by-file exploration (see sources; mark self-reported). Prefer this *instead of* blind full-repo greps when installed — still subject to MCP hygiene (don’t pile unrelated MCP servers beside it).
+
+**Why it saves:** Wrong exploration pins junk into the prefix forever. Stopping early and returning only useful hits avoids the re-read tax.
 
 ---
 
@@ -87,6 +92,9 @@
 | Claude Code Concise (announced Aug 2026; secondary) | https://explainx.ai/blog/claude-code-concise-output-style-config-august-2026 | Concise: “leads with the result, keeps responses short… still gives full detail when you ask.” | no figure given |
 | frankchu — router + caching trap | https://dev.to/frankchu/i-built-a-router-to-cut-my-claude-code-bill-and-prompt-caching-was-the-whole-problem-3ifl | Per-step model routing “can pay more with the router than without it.” Lock tier per conversation; downshift only at cold boundaries. | no single %; mechanism claim |
 | ofox.ai — Claude usage limits | https://ofox.ai/blog/claude-code-usage-limit-hit-too-fast-2026/ | “Agent teams can use about 7x the tokens… One developer… found 85% of the usage came from subagent-heavy sessions.” | 7× / 85% **anecdotal / attributed** — verify before citing as fact |
+| RTK (Rust Token Killer) | https://github.com/RTK-AI/rtk · Ammar Najjar toolkit https://ammar-najjar.com/blog/local-ai-coding-toolkit/ | Compresses shell/CLI output before it hits the agent; “Choose the right tool → run through RTK → return only useful output.” README / demos claim large Bash-output cuts. | Vendor demo claims often 60–90% on *command output*; JetBrains / Quesma benchmarks find little or no **bill** savings (hook misses Read/Grep; ~≤3% input ceiling) — treat as **disputed** |
+| microsoft/tgrep | https://github.com/microsoft/tgrep | “Tools like `grep` and `ripgrep` scan every file on every search… tgrep pre-builds a trigram index so searches only touch the small set of files that could match.” Used as grep replacement for agents (repo `AGENTS.md`; Copilot CLI integration). | Latency up to ~52× vs ripgrep on large repos (project benchmarks); no universal token-% claim |
+| DeusData/codebase-memory-mcp | https://github.com/DeusData/codebase-memory-mcp · arXiv:2603.27277 | “10× fewer tokens, 2.1× fewer tool calls vs. file-by-file exploration” (31 repos). README: five structural queries “~3,400 tokens vs ~412,000” (**99.2%** reduction claim). | **Self-reported / preprint**; verify on your harness |
 
 ---
 
@@ -105,7 +113,7 @@
 - Do not switch models mid-warm session unless you accept a cache miss.
 - Use subagents to keep noise out of the parent. Do not fan out blindly.
 - Ask for short replies. Lead with the result. Skip preambles.
-- Point at files. Search before full reads. Stop when evidence is enough.
+- Point at files. Prefer tgrep / graph MCP / `rg` over full dumps; wrap shell with RTK. Stop when evidence is enough.
 - Protect the prompt-cache prefix. Stable tools and rules first.
 - Measure with `/context` and cache-hit logs. Anecdotes ≠ your bill.
 
@@ -117,6 +125,8 @@ MCP hygiene → clear/fresh sessions → lean standing docs → compact/prune �
 ## 4. Caveats — anecdotes vs measured; conflicts
 
 ### Anecdotes / self-reported (do not present as universal law)
+- RTK: vendor demos claim large Bash-output cuts; independent cost benchmarks (JetBrains, Quesma) often show ~0% bill savings or slight cost *increase* — do not cite 60–90% as proven.
+- codebase-memory-mcp: 10× / 99.2% token claims are author/preprint — verify before deck guarantees.
 - @anshuc 80–90% then corrected to 40–70%; Plus-quota demo 50% vs 7%.
 - Shuttle 45k autocompact buffer; Scott Spence 60% MCP schema cut; Verma ~2–3k/turn; Hasan $74→$11 / ~80% combined.
 - Aakash Gupta / Anthropic internal Tool Search 134k→5k (85%) — via VentureBeat, not a peer paper.
