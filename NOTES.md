@@ -9,19 +9,20 @@
 
 
 
+
 ## Contents
 
 - [Scout policy (standing)](#scout-policy-standing)
-- [1. Top patterns (5–10)](#1.-top-patterns-510)
-- [2. Named sources — handle + link + short quote](#2.-named-sources-handle-link-short-quote)
-- [3. Slide bullets (STE100-style)](#3.-slide-bullets-ste100-style)
-- [4. Caveats — anecdotes vs measured; conflicts](#4.-caveats-anecdotes-vs-measured-conflicts)
-- [5. Optional — 1-page speaker notes](#5.-optional-1-page-speaker-notes)
+- [1. Top patterns (5–10)](#1-top-patterns-5-10)
+- [2. Named sources — handle + link + short quote](#2-named-sources-handle-link-short-quote)
+- [3. Slide bullets (STE100-style)](#3-slide-bullets-ste100-style)
+- [4. Caveats — anecdotes vs measured; conflicts](#4-caveats-anecdotes-vs-measured-conflicts)
+- [5. Optional — 1-page speaker notes](#5-optional-1-page-speaker-notes)
 - [Source list (markdown)](#source-list-markdown)
 - [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Case studies: one agent vs multi-agent orchestration](#case-studies-one-agent-vs-multi-agent-orchestration)
-- [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-u/bisonbear2-2026)
+- [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
 - [Savings cheat sheet (rough figures)](#savings-cheat-sheet-rough-figures)
 - [Gaps](#gaps)
 - [X primary delta (17 Sep 2026 browser pass)](#x-primary-delta-17-sep-2026-browser-pass)
