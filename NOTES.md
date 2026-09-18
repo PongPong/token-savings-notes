@@ -4,7 +4,7 @@
 **Prepared:** 17 Sep 2026 (Europe/London); restructured 18 Sep 2026  
 **Rule:** No invented quotes or numbers. % claims marked self-reported. **Savings cheat sheet** = single numbers board.
 
-Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH-CASES.md) · [SOURCES.md](./SOURCES.md) · [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) · [SPEAKER-NOTES.md](./SPEAKER-NOTES.md)
+Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH-CASES.md) · [SOURCES.md](./SOURCES.md) · [MODE-MATRIX.md](./MODE-MATRIX.md) · [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) · [SPEAKER-NOTES.md](./SPEAKER-NOTES.md)
 
 ---
 
@@ -16,6 +16,7 @@ Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH
 - [Meter token use without typing /context](#meter-token-use-without-typing-context)
 - [TypeSafe Jev (System One)](#typesafe-jev-system-one)
 - [Case studies: one agent vs multi-agent](#case-studies-one-agent-vs-multi-agent)
+- [Agent modes × context pollution](#agent-modes-context-pollution)
 - [Slide bullets (STE100-style)](#slide-bullets-ste100-style)
 - [Caveats — anecdotes vs measured; conflicts](#caveats-anecdotes-vs-measured-conflicts)
 - [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
@@ -226,6 +227,22 @@ When to use one agent vs multi-agent (and which combo). Full cases and sources:
 | Unsure | **One agent first; add workers only when clutter or parallelism is real** | Default away from tax |
 
 ---
+
+## Agent modes × context pollution
+
+Session modes (Ask / Plan / Agent / Debug / Explore…) across Cursor, Claude Code, OpenCode, Codex, Windsurf, Continue, Aider, Copilot — and which ones keep the **main** context clean.
+
+**Full matrix + glossary + per-agent notes:** [MODE-MATRIX.md](./MODE-MATRIX.md)
+
+| Protects main context? | Pattern |
+| --- | --- |
+| **Best** | Explore / research **subagent** → summary only (Claude Explore, Copilot/OpenCode/Cursor subagents) |
+| **Yes** | Chat with **no tools** (Continue Chat); Claude `/btw`; Plan → **fresh** implement (Windsurf @plan file; Cursor mode switch = fresh context) |
+| **Partial** | Ask/Plan **in main** with read tools — no writes, but search can still fill the window |
+| **No** | Agent/Build/Code in main; **Cursor Debug** (logs/traces); Aider ask→code same thread (by design) |
+| **Isolates peers, multiplies spend** | Claude Agent Teams (~**7×** tokens in plan mode — official) |
+
+Do not confuse **approval** modes (Auto-review, acceptEdits, sandbox) with Ask/Plan — they change prompts, not isolation.
 
 ## Slide bullets (STE100-style)
 
