@@ -11,10 +11,10 @@
 
 - [Savings cheat sheet (rough figures)](#savings-cheat-sheet-rough-figures)
 - [Top patterns (by savings impact)](#top-patterns-by-savings-impact)
+- [Meter token use without typing /context](#meter-token-use-without-typing-context)
 - [Case studies: one agent vs multi-agent orchestration](#case-studies-one-agent-vs-multi-agent-orchestration)
 - [Slide bullets (STE100-style)](#slide-bullets-ste100-style)
 - [Caveats — anecdotes vs measured; conflicts](#caveats-anecdotes-vs-measured-conflicts)
-- [Speaker notes (1 page)](#speaker-notes-1-page)
 - [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
@@ -49,7 +49,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Agent Teams / heavy subagent fan-out | **~7× more** tokens; small fan-out **2.6×–5.9× more** | Anthropic **official**; Systima **measured** | Savings = *avoid* this |
 | Stacked levers (MCP + clear + terse + …) | Combined “**~80%**” / $74→$11 weekends | Hasan **self-reported** | Not transferable as a guarantee |
 
-**Footer:** Isolation ≠ cheaper system-wide. Measure with `/context` and your own replays.
+**Footer:** Isolation ≠ cheaper system-wide. Measure with a status line + `ccusage` (or your dashboard). Use `/context` only for a one-shot peek.
 
 ## Top patterns (by savings impact)
 Sorted by **rough savings impact** (high → low). Stars = impact estimate from attributed NOTES evidence (not a lab score). Say “practitioners report…” — do not guarantee %.
@@ -137,6 +137,48 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 
 
 ---
+
+
+## Meter token use without typing /context
+
+You do not need to type `/context` or `/status` all the time. Most stacks already write usage to disk or can show a live meter.
+
+### Live meter (while you work)
+
+- **Claude Code status line** — Set a `statusLine` command in settings. After each turn, Claude Code runs your script with session JSON (context %, tokens, cost, rate limits). Your script prints a bar at the bottom. This is local and does **not** spend API tokens.
+- Guides: [status line docs](https://claude-code.mintlify.app/en/statusline), [Andrew Connell write-up](https://www.andrewconnell.com/articles/claude-code-cli-statusline/), [example script](https://github.com/nnaveenraju/claude-code-status-line).
+- Caveat: the built-in context % can miss system/MCP overhead ([issue #34537](https://github.com/anthropics/claude-code/issues/34537)). Treat it as a pressure gauge, not a perfect bill.
+
+### History from local logs (after sessions or on a schedule)
+
+Agents already log turns. These tools read those files:
+
+| Tool | What it does | Link |
+| --- | --- | --- |
+| **ccusage** | Daily / session / 5-hour block reports from local JSONL (Claude Code, Codex, OpenCode, and more) | https://github.com/ryoppippi/ccusage — try `npx ccusage@latest` |
+| **TokenTelemetry** | Local dashboard across Claude Code, Cursor, Codex, OpenCode, Copilot, … | https://github.com/onichan64/tokentelemetry |
+| **Agent Profiler** | Hooks + SQLite; session shape, tool noise, always-on context audit | https://github.com/cleverb/agent-profiler |
+| **Agentlytics** | Unified local analytics for many editors | https://www.npmjs.com/package/agentlytics |
+| **Agent Lens** | Multi-agent usage + cache view | https://github.com/opseal/agent-lens |
+| **CodeDash** | Session browser + cost from real token fields | https://github.com/EvilFreelancer/codedash |
+
+### Hooks and OpenTelemetry (always-on export)
+
+- **PostToolUse / transcript hooks** — Read `transcript_path` JSONL (`input_tokens`, cache fields, `output_tokens`) and append to your own ledger.
+- **Claude Code OpenTelemetry** — `CLAUDE_CODE_ENABLE_TELEMETRY=1` plus OTEL exporters for token and cost metrics (needs a collector such as Grafana).
+
+### Experiments (A/B, not a live UI)
+
+- **Stet** — Replay real repo tasks and compare bills across setup changes ([stet.sh write-up](https://www.stet.sh/blog/gpt-56-token-saving-modes)).
+- **Systima** — Metered studies (e.g. subagent tax).
+
+### Simple weekly habit
+
+1. Keep a **status line** on while coding.
+2. Once a week run **`npx ccusage@latest daily`** (or your dashboard) and note cache-read share + top sessions.
+3. Only use `/context` when you need a one-shot breakdown inside an active chat.
+
+**Weekly refresh:** re-check links and new metering tools each Monday with the rest of this playbook.
 
 ## Case studies: one agent vs multi-agent orchestration
 
@@ -336,11 +378,9 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 - Ask for short replies. Lead with the result. Skip preambles.
 - Point at files. Prefer tgrep / graph MCP / `rg` over full dumps; wrap shell with RTK. Stop when evidence is enough.
 - Protect the prompt-cache prefix. Stable tools and rules first.
-- Measure with `/context` and cache-hit logs. Anecdotes ≠ your bill.
-- Local “token savers” can raise the *trajectory* bill. Measure your own tasks (bisonbear2).
+- Prefer a status line + weekly `ccusage`. `/context` is optional. Anecdotes ≠ your bill.
+- Local “token savers” can raise the *trajectory* bill. Replay your own tasks (bisonbear2).
 
-**One-liner ranking for slides:**  
-MCP hygiene → clear/fresh → cheap routing → lean docs → cache hygiene → compact/prune → targeted explore → short output → selective subagents.
 
 ---
 
@@ -367,25 +407,6 @@ MCP hygiene → clear/fresh → cheap routing → lean docs → cache hygiene �
 4. **Auto-compact:** Some practitioners disable it (noise / lost control). Others compact manually at ~60%. Product auto-compact near 95% is late for quality.
 5. **STE100 vs Concise:** STE100 = short *sentences* / clarity; Concise = less narration. STE100 alone does not guarantee fewer tokens.
 6. **Starving context backfires:** Under-spec prompts cause more exploration and retries (Atticus Li thesis: optimize cost-per-accepted-change, not tokens-per-message).
-
----
-
-## Speaker notes (1 page)
-
-**Open (30s):** Agents bill for re-reading their own past. Most spend is not “the next clever prompt.” It is history, tools, and retries.
-
-**Pattern walk (3–4 min):**  
-1) Show `/context` mental model: system + MCP + memory + messages.  
-2) MCP: cite Shihipar 67k+; Spence before/after. Action: disable unused; defer load.  
-3) Session: `/clear` between tasks; `/compact` mid-task with a keep-list.  
-4) Docs: short AGENTS.md; skills on demand (Verma).  
-5) Models: cheap explore / expensive implement; warn about cache bust. Cite Anthropic Haiku-switch example and @anshuc Luna+Astra *as self-reported*.  
-6) Subagents: protect parent; watch total fan-out.  
-7) Output: Concise / STE100-ish bullets cut decode cost.
-
-**Close (30s):** Stack levers. They multiply. Pick two this week: MCP hygiene + clear between tasks. Log cache hits. Re-check after product updates.
-
-**Do not say on stage:** Exact % savings as guaranteed. Say “practitioners report…” and name the source.
 
 ---
 
@@ -1141,9 +1162,9 @@ X search URLs all hit login. Individual public posts stayed readable. Nitter fal
 
 **Slide-worthy adds:** @posthog MCP 113k→5k; @jcfmunoz `/clear` 412K; @bcherny auto-compact is reliability not cost; @meta_alchemist 70–80% (self-reported); @ellen_in_sf 40–60% output.
 
----
-**Maintenance:** Weekly refresh by Engineer (Monday ~09:00 Europe/London). Last baseline: 2026-09-17. Practical examples added 2026-09-17 (format-once + dense edits). X primary delta merged 2026-09-17. Example prompts (real-world) section added 2026-09-17; categories 3–7 (MCP/clear/compact/routing/AGENTS) merged same day (Crushing C.O.D.E STE100, toppa/L1nefeed gists, Prettier handshake, Concise CLAUDE.md, OpenCode compaction, Shuttle plan.md, Atticus plan quote, house—Pong). Savings cheat sheet + TOC added 2026-09-17. TOC/sections ordered by impact 2026-09-17. Source of truth: private GitHub `PongPong/token-savings-notes` (mirror: `/workspace/token-scout/NOTES.md`).
 
+---
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas under scout policy. Re-check metering tools and links in **Meter token use without typing /context**. Update the savings cheat sheet only when new attributed figures appear. Keep `SPEAKER-NOTES.md` in sync if the talk track changes. Last edit: 2026-09-18. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
