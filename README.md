@@ -8,6 +8,7 @@ Private playbook for cutting LLM and agent token spend (presentation + team prac
 - `EXAMPLE-PROMPTS.md` — full pasteable prompt / config library
 - `ORCH-CASES.md` — one-agent vs multi-agent case write-ups
 - `SOURCES.md` — named quotes, link list, X primary delta
+- `MODE-MATRIX.md` — Ask/Plan/Agent/Debug/Explore modes × context pollution
 - `TYPESAFE-JEV.md` — TypeSafe Jev (System One) use cases
 - `SPEAKER-NOTES.md` — short talk track
 
@@ -20,7 +21,7 @@ Engineer triggers the refresh. Update:
 1. New X/web tips in `SOURCES.md` (credible accounts; include CN-language when relevant)
 2. Metering tools in `NOTES.md`
 3. Savings cheat sheet only when new attributed figures appear
-4. Companions (`EXAMPLE-PROMPTS`, `ORCH-CASES`, `TYPESAFE-JEV`, `SPEAKER-NOTES`) if content moved
+4. Companions (`EXAMPLE-PROMPTS`, `ORCH-CASES`, `MODE-MATRIX`, `TYPESAFE-JEV`, `SPEAKER-NOTES`) if content moved
 5. Do this week checklist if default ops changed
 
 Do not invent quotes or percentages. Mark self-reported claims.
