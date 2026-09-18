@@ -12,6 +12,7 @@
 - [Savings cheat sheet (rough figures)](#savings-cheat-sheet-rough-figures)
 - [Top patterns (by savings impact)](#top-patterns-by-savings-impact)
 - [Meter token use without typing /context](#meter-token-use-without-typing-context)
+- [TypeSafe Jev (System One)](#typesafe-jev-system-one)
 - [Case studies: one agent vs multi-agent orchestration](#case-studies-one-agent-vs-multi-agent-orchestration)
 - [Slide bullets (STE100-style)](#slide-bullets-ste100-style)
 - [Caveats — anecdotes vs measured; conflicts](#caveats-anecdotes-vs-measured-conflicts)
@@ -179,6 +180,15 @@ Agents already log turns. These tools read those files:
 3. Only use `/context` when you need a one-shot breakdown inside an active chat.
 
 **Weekly refresh:** re-check links and new metering tools each Monday with the rest of this playbook.
+
+
+## TypeSafe Jev (System One)
+
+Jev is a **decision** model (not a chat/coding LLM): state + typed questions → probabilities. Use it to replace expensive LLM calls for routing, guardrails, and triage.
+
+**Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md)
+
+**One-line fit:** Keep frontier models for writing and hard reasoning; let Jev handle fast classify / route / verify steps (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
 
 ## Case studies: one agent vs multi-agent orchestration
 
@@ -1164,7 +1174,7 @@ X search URLs all hit login. Individual public posts stayed readable. Nitter fal
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas under scout policy. Re-check metering tools and links in **Meter token use without typing /context**. Update the savings cheat sheet only when new attributed figures appear. Keep `SPEAKER-NOTES.md` in sync if the talk track changes. Last edit: 2026-09-18. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-18. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
