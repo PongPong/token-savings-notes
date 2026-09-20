@@ -84,19 +84,59 @@ Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “
 
 ### 9. Minecraft agent — Astra plans, Jev picks the next action
 
-**Scenario:** Drive a Minecraft Java bot through a long route (Nether travel → End dragon) with continuous decisions under structured game state — not screenshot pixels or per-key control.
+**Repo:** [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent) (~259★). Astra/Sol plans sparsely; Jev (`typesafe/jev-1.13`) selects one **code-listed** Mineflayer action each step. OpenRouter via local relay; model IDs in README.
 
-**Pattern ([rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent)):**
-- **Planner (frontier LLM):** GPT-6 Astra (default) or GPT-5.6 Sol sets objective, item targets, travel waypoint (`PLANNER_MODEL` via OpenRouter chat completions).
-- **Controller (Jev):** `typesafe/jev-1.13` chooses **one** legal action from current observations (travel, mine one block, collect, craft, open chest, eat, sleep, combat / bed attack, …). Mineflayer executes pathfinding and protocol.
-- Bounded combat: `end-combat.mjs` offers one bed-attack option; **Jev selects**; action places/aims/uses within a window and aborts if cover/breath fails.
-- Evidence: `events.jsonl` logs requests, responses, selected actions, game results; victory needs dragon-death + exit-portal checks.
+**Latest verified result (author README, `nether-final-08`):** empty inventory → Nether → six bed explosions → exit, full health, no deaths; **8m 43.3s** (~**40%** shorter than prior video — **self-reported**). **131 Jev decisions** / **35 Astra calls**. Peaceful surveyed seed; recordings local/out of git.
 
-**Latest verified result (author README, run `nether-final-08`):** empty inventory → Nether route → six bed explosions on first landing → exit, full health, no deaths; **8m 43.3s** (prior video 14m 31.8s, ~**40%** shorter — **self-reported** timing). **131 Jev decisions** and **35 Astra calls**. Peaceful Survival seed with surveyed route; recordings stay local / out of git.
+#### How the prompts and I/O are designed (`models.mjs`)
 
-**Why it fits token spend:** Classic **cheap orch leaf** split — expensive model for sparse planning; Jev for high-frequency action Choice over a code-listed action set (same family as browser/tool-pick §6 and TypeSafe Doom/Minecraft demos). Keeps frontier off the every-tick control loop.
+**Role split (hard rule in both prompts):** Astra/Sol = high-level **plan only**. Jev = **every** player action. Planner must not emit keypresses or invent observations.
 
-**Caveats:** Seed/route surveyed; Peaceful difficulty for that recording; not proof of hardest seed. Related demos cited by author: [ellistev/typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo), [fhshaik/typesafe-mario](https://github.com/fhshaik/typesafe-mario), [phyous/tsai-sc](https://github.com/phyous/tsai-sc). Measure your own Astra:Jev call ratio.
+**1) Planner input / output (Astra or Sol)**
+
+| Piece | Design |
+| --- | --- |
+| **Endpoint** | `/api/v1/chat/completions` · `PLANNER_MODEL` default `openai/gpt-6-astra` |
+| **System prompt** | Long, seed-specific. Three variants keyed off `knownSeed.requiresEyes` / `requiresNether` / default. States difficulty (Peaceful vs Easy), kit targets, surveyed coords, “no cheats/teleports”, camera limits, and that **Jev chooses all actions**. |
+| **User message** | `JSON.stringify(compactObservation(state))` — same compacted game state Jev sees (plus plan-trigger fields when calling `plan`). |
+| **Constraints** | `reasoning.effort: 'low'`, `max_tokens: 1800`, `response_format: json_object` |
+| **Required JSON out** | `{ objective: string, targets: { [item]: minCount }, waypoint: {x,y,z}\|null, notes: string }` — validated (`objective` must be string). |
+| **Cadence** | Not every tick — milestones, stage change, failures, arrival, or periodic async refresh (`async-planner` / `planTrigger`). Plans refresh **while Jev keeps acting**. |
+
+Prompt themes (paraphrase of source, not FB): keep objectives short; one kit objective not per-recipe spam; follow `kitNeeds` deficits; travel uses surveyed `travelRoute.next`; End = beds from cover; never invent observations.
+
+**2) Jev input (state + Choice question)**
+
+Code builds a candidate list `options[]` (`{ key, description, fn }`) — only **legal** moves for this tick (travel, mine one block, loot, craft, boat, escape breath, bed attack, wait, …). Then:
+
+```text
+POST /api/alpha/decisions
+model: typesafe/jev-1.13
+state: JSON.stringify(compactObservation(gameState))   # stringified structured state
+questions.action:
+  type: choice
+  instructions: <fixed controller brief — see below>
+  criteria: { "a0": "<desc>", "a1": "<desc>", ... }   # from options[i].description
+```
+
+**`compactObservation` (shrink state before both models):** keep recent actions to last **5** (`action/result/position` only); trim mobs to **16** within 48 blocks; drops within 24 blocks; strip `hotbar`, `equipment`, `xp`, recording flags, raw `looted` list noise; compress bastion loot counts. Goal: small relevant state (TypeSafe “context rot” rule).
+
+**State typically includes:** `position`, `dimension`, `health`, `food`, `inventory`, `kitNeeds`, `stage`, `plan` (current Astra JSON), `knownSeed` / route, `battle` / dragon observations, `recent` action results, `difficulty`, run counters — **structured Mineflayer/sensor data, not screenshots**.
+
+**Fixed Choice `instructions` (controller brief):** advance planner objective; **FIRST** take offered escape if breath cloud threatens (respect `safeAtCurrentHeight`); never eat/wait inside cloud; after safety, eat if health &lt; 16 until food bar full; survival &gt; item reserves; prefer boat for long water; don’t craft/collect past target; avoid failed/needless waits; movement/mining may use pathfinding but **Jev owns the choice**.
+
+**3) Jev output → game**
+
+| Field | Meaning |
+| --- | --- |
+| `answers.action.choice` | Key like `a3` |
+| Harness | `options[Number(choice.slice(1))]` → run that option’s `fn` |
+| Reject | Missing/invalid choice → throw `Invalid JEV action` (no free-form action inventing) |
+
+**Design takeaway for agents:** (1) **Code enumerates** the action set each step — Jev only ranks. (2) **Stringify one shared state** for plan + decide after compaction. (3) **Planner prompt = JSON contract + world rules**; **Jev prompt = short Choice instructions + criteria map**. (4) Sparse frontier calls, dense Jev calls → token/cost shape of cheap leaf / tool-pick (§6).
+
+**Caveats:** Seed/route surveyed; Peaceful for that recording. Related demos cited by author: [typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo), [typesafe-mario](https://github.com/fhshaik/typesafe-mario), [tsai-sc](https://github.com/phyous/tsai-sc).
+
 
 ## Use case: Verbatim context compaction (fast-jev-compaction)
 
@@ -124,7 +164,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | NOTES idea | Jev angle |
 | --- | --- |
 | Cheap-model routing | Route with Jev, then run Luna/Haiku vs Opus/Astra |
-| Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra/Sol plans sparsely; Jev picks each bounded action (131 Jev / 35 Astra in nether-final-08) |
+| Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra JSON plan sparsely; Jev Choice over code-built `a0…an` actions |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
