@@ -81,6 +81,23 @@ Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “
 **Source:** Flavio editor / feed-filter demos; TypeSafe real-time use-case list.
 
 
+
+### 9. Minecraft agent — Astra plans, Jev picks the next action
+
+**Scenario:** Drive a Minecraft Java bot through a long route (Nether travel → End dragon) with continuous decisions under structured game state — not screenshot pixels or per-key control.
+
+**Pattern ([rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent)):**
+- **Planner (frontier LLM):** GPT-6 Astra (default) or GPT-5.6 Sol sets objective, item targets, travel waypoint (`PLANNER_MODEL` via OpenRouter chat completions).
+- **Controller (Jev):** `typesafe/jev-1.13` chooses **one** legal action from current observations (travel, mine one block, collect, craft, open chest, eat, sleep, combat / bed attack, …). Mineflayer executes pathfinding and protocol.
+- Bounded combat: `end-combat.mjs` offers one bed-attack option; **Jev selects**; action places/aims/uses within a window and aborts if cover/breath fails.
+- Evidence: `events.jsonl` logs requests, responses, selected actions, game results; victory needs dragon-death + exit-portal checks.
+
+**Latest verified result (author README, run `nether-final-08`):** empty inventory → Nether route → six bed explosions on first landing → exit, full health, no deaths; **8m 43.3s** (prior video 14m 31.8s, ~**40%** shorter — **self-reported** timing). **131 Jev decisions** and **35 Astra calls**. Peaceful Survival seed with surveyed route; recordings stay local / out of git.
+
+**Why it fits token spend:** Classic **cheap orch leaf** split — expensive model for sparse planning; Jev for high-frequency action Choice over a code-listed action set (same family as browser/tool-pick §6 and TypeSafe Doom/Minecraft demos). Keeps frontier off the every-tick control loop.
+
+**Caveats:** Seed/route surveyed; Peaceful difficulty for that recording; not proof of hardest seed. Related demos cited by author: [ellistev/typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo), [fhshaik/typesafe-mario](https://github.com/fhshaik/typesafe-mario), [phyous/tsai-sc](https://github.com/phyous/tsai-sc). Measure your own Astra:Jev call ratio.
+
 ## Use case: Verbatim context compaction (fast-jev-compaction)
 
 **Problem:** Built-in `/compact` asks an LLM to **summarize** old turns. Summaries are lossy — file paths, exact errors, constraints, and commands can disappear even when still needed.
@@ -107,6 +124,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | NOTES idea | Jev angle |
 | --- | --- |
 | Cheap-model routing | Route with Jev, then run Luna/Haiku vs Opus/Astra |
+| Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra/Sol plans sparsely; Jev picks each bounded action (131 Jev / 35 Astra in nether-final-08) |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
@@ -136,4 +154,4 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
