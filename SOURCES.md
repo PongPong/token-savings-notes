@@ -33,6 +33,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | Graphify Labs | https://github.com/Graphify-Labs/graphify | “maps your entire project (code, docs, PDFs, images, videos) into a knowledge graph you can query instead of grepping through files.” Code: local tree-sitter; “LLM credits **0**” for graph build vs per-token systems (benchmark table). | no universal session-token %; code-map credits **0** (author bench) |
 | fast-jev-compaction (tamaratran) | https://github.com/tamaratran/fast-jev-compaction | “never rewrites anything… only deletes tool calls and tool results Jev says are no longer needed”; Claude Code plugin replaces compaction summary when reduction enough; else fallback. `reductionRatio` = char cut, not a published token-%. | No universal token-% in README |
 | llm-engineer-toolkit (KalyanKS-NLP) | https://github.com/KalyanKS-NLP/llm-engineer-toolkit | “curated list of 120+ LLM libraries category wise.” Token-relevant categories: Routers, Cache, Memory, Monitoring, Prompts (compression), Structured Outputs. | Catalog only — no toolkit-wide savings % |
+| coleam00 Context-Engineering-Intro | https://github.com/coleam00/Context-Engineering-Intro | Context engineering template: lean CLAUDE.md + examples/ + INITIAL.md → `/generate-prp` → `/execute-prp`. “Most agent failures aren't model failures - they're context failures.” Slogan 10x/100x is advocacy, not a token %. | Quality / completion workflow; measure trajectory cost |
 
 ---
 
