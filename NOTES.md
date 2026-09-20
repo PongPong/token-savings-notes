@@ -31,7 +31,7 @@ Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH
 Default operating checklist for agents and humans. Details live in the sections below.
 
 1. **Turn off unused MCP / tools** — Biggest easy win. Prefer short schemas or Tool Search; one high-signal graph tool beats many idle servers.
-2. **New session for a new task** — `/clear` between unrelated work. `/compact` mid-task around ~60% full with an explicit keep-list.
+2. **New session for a new task** — `/clear` between unrelated work. `/compact` mid-task around ~60% full with an explicit keep-list (prefer prune-first / [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) over lossy summary when tool exhaust dominates).
 3. **Meter without typing** — Status line while you work; weekly `npx ccusage@latest daily` (see Meter section). Do not live on `/context`.
 4. **Dense edits, format once** — Agent emits dense patches; run the project’s CLI formatter once at the end (never LLM pretty-print).
 5. **Route before you burn frontier** — Cheap model (or TypeSafe Jev) for triage/guards; strong model only for hard implement. No mid-warm `/model` switch.
@@ -51,6 +51,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | `/clear` / new session (unrelated task) | **~30–50%** per-message (community); one case **412k** cleared | Atticus **attributed**; @jcfmunoz **self-reported** | Same task may prefer warm cache |
 | `/compact` ~60% util (not 95%) | No universal %; Shuttle autocompact buffer example 45k→176k free | MindStudio tip; Shuttle **self-reported** | Quality lever more than a fixed % |
 | Context prune before LLM summary (DCP etc.) | No universal %; cache-hit notes ~85% vs ~90% | DCP docs ecosystem | Free mechanical prune first |
+| fast-jev-compaction (Jev keep/drop tools) | No universal token-% in README; reports **char** `reductionRatio`; fallback to LLM summary if too little cut | [tamaratran/fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) README; LiteLLM TypeSafe compaction blog | Verbatim prune — not a summary; measure incl. Jev cost |
 | STE100 / Concise / terse output | **No STE100 %**; terse output **30–50%** of *output*; Concise article **40–60%** output | Hasan / @ellen_in_sf **self-reported**; STE100 gists **no figure** | Cuts narration, not whole bill |
 | Cheap orch + strong leaf | Quota **40–70%** (was 80–90%); demo **50%→7%** weekly Plus | @anshuc **self-reported**, author-corrected | Premium-quota shape |
 | Haiku/cheap Explore leaf (vs inherit Opus) | **~37%** fewer metered tokens (one pair) | Systima **measured** n=1 | Pin leaf model |
@@ -106,13 +107,16 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 3/5):** Cuts recurring history tax; no universal %. Compact ~60% util.
 **What people do:** Summarize history on purpose. Keep decisions, active errors, files in scope, constraints. Drop resolved logs and dead tangents.  
 **Why it saves:** Full history is resent every turn. A shorter summary cuts the recurring re-read tax.  
-**Practice tip:** Compact ~60% utilization (not at 95%). Auto-compact near the ceiling often summarizes already-degraded context.
+**Practice tip:** Compact ~60% utilization (not at 95%). Auto-compact near the ceiling often summarizes already-degraded context.  
+**Prefer prune-before-summary when you can:** LLM summaries are lossy (paths, errors, constraints vanish). For tool-heavy sessions, prefer Pattern 7 / [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (Jev keep/drop of tool calls — verbatim text) over a summary-only `/compact`. See [TYPESAFE-JEV.md](./TYPESAFE-JEV.md#use-case-verbatim-context-compaction-fast-jev-compaction).
 
 
 ### 7. Context pruning (drop tool exhaust first; summarize last) — ★★★☆☆ (3/5)
-**Impact (why 3/5):** Mechanical prune is free; no single published %.
+**Impact (why 3/5):** Mechanical prune is free; Jev-guided prune costs a cheap decision call; no single published %.
 **What people do:** Remove stale tool outputs, duplicate file reads, old errors *before* LLM summarization. OpenCode DCP: dedup + purge + optional compress. Atlassian Rovo Dev: structure-aware prune cascade.  
-**Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Summary is the fallback.
+**Concrete tool — [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)** (`tamaratran/fast-jev-compaction`): npm library + Claude Code plugin. Uses **TypeSafe Jev** to score each historical tool call/result (`noul`: keep call? keep result verbatim?). Actions: keep both, keep call + truncate result (`truncateHeadChars`, default 300), or drop call+result. **Never rewrites** user/assistant text — only deletes/truncates tools. Pins first message + newest `preserveRecentMessages` (default 6). Claude Code hook replaces built-in `/compact` summary when reduction is enough; else falls back to summary. Needs `TYPESAFE_API_KEY`; function hooks flag for Claude Code 2.1.274+. Related: LiteLLM’s TypeSafe Jev compaction guardrail (drop stale tool results before the model call).  
+**Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Jev prune is cheap vs a frontier summarize pass and keeps exact paths/errors. Summary is the fallback.  
+**Caveat:** README publishes `reductionRatio` (chars), not a universal token-%. Include Jev’s own cost when measuring. Do not invent a deck %.
 
 
 ### 8. Targeted exploration (narrow @files; stop early; shrink shell output) — ★★★☆☆ (3/5)
@@ -199,11 +203,11 @@ Agents already log turns. These tools read those files:
 
 ## TypeSafe Jev (System One)
 
-Jev is a **decision** model (not a chat/coding LLM): state + typed questions → probabilities. Use it to replace expensive LLM calls for routing, guardrails, and triage.
+Jev is a **decision** model (not a chat/coding LLM): state + typed questions → probabilities. Use it to replace expensive LLM calls for routing, guardrails, and triage — and for **verbatim context prune** via [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (Patterns 6–7).
 
 **Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md)
 
-**One-line fit:** Keep frontier models for writing and hard reasoning; let Jev handle fast classify / route / verify steps (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
+**One-line fit:** Keep frontier models for writing and hard reasoning; let Jev handle fast classify / route / verify / keep-or-drop-tool-result steps (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
 
 ## Case studies: one agent vs multi-agent
 
@@ -408,7 +412,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools and [TYPESAFE-JEV.md](./TYPESAFE-JEV.md). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions in sync: `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-18. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), and [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions in sync: `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-20. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
