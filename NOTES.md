@@ -20,6 +20,7 @@ Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH
 - [Slide bullets (STE100-style)](#slide-bullets-ste100-style)
 - [Caveats — anecdotes vs measured; conflicts](#caveats-anecdotes-vs-measured-conflicts)
 - [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
+- [Context engineering (PRP workflow)](#context-engineering-prp-workflow)
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
 - [Library catalog: llm-engineer-toolkit](#library-catalog-llm-engineer-toolkit)
@@ -97,6 +98,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 4/5):** ~2–3k tokens/turn avoided when skills stay unloaded (Verma self-reported).
 **What people do:** Keep always-on rules thin (phonebook, not manual). Move domain packs into skills that load when triggered.  
 **Why it saves:** Always-on files tax *every* turn (even with cache, still a recurring cost). On-demand skills avoid that baseline.
+**Related:** Feature-specific context belongs in a **PRP / INITIAL.md**, not in always-on CLAUDE.md — see **Context engineering (PRP workflow)**.
 
 
 ### 5. Prompt-caching hygiene (stable prefix; don’t break it) — ★★★★☆ (4/5)
@@ -255,6 +257,8 @@ Do not confuse **approval** modes (Auto-review, acceptEdits, sandbox) with Ask/P
 
 ## Slide bullets (STE100-style)
 
+- Context engineering: lean always-on rules + examples + PRP blueprint; execute in a clean session.
+
 **Title: Cut agent token spend — what practitioners actually do**
 
 - Context is resent every turn. Junk context is a recurring tax.
@@ -361,6 +365,43 @@ Concrete tactics agents can apply today. Prefer these over abstract “be effici
 
 
 
+
+## Context engineering (PRP workflow)
+
+Template and workflow from [coleam00/Context-Engineering-Intro](https://github.com/coleam00/Context-Engineering-Intro) (~13.8k★). **Substance only** (no social share links). Goal: give the coding agent enough structured context to finish features end to end — most agent failures are **context** failures, not model failures (author framing).
+
+**Author slogan (not a token metric):** “Context Engineering is 10x better than prompt engineering and 100x better than vibe coding.” Treat as advocacy, **not** a savings %.
+
+### Prompt engineering vs context engineering
+
+| | Prompt engineering | Context engineering |
+| --- | --- | --- |
+| Focus | Clever wording of one ask | Full system: docs, examples, rules, patterns, validation |
+| Metaphor (author) | Sticky note | Full screenplay |
+| Outcome sought | Better phrasing | Consistency, multi-step features, self-correcting loops |
+
+### Workflow (Claude Code–centered; portable)
+
+1. **Global rules** — maintain a lean `CLAUDE.md` / `AGENTS.md` (project conventions, test/style gates). Same spirit as Pattern 4: phonebook, not a novel.
+2. **Examples folder** — put real patterns under `examples/` (structure, tests, CLI, agent/tools). Assistants copy patterns they can see.
+3. **Feature ask (`INITIAL.md`)** — fill FEATURE / EXAMPLES / DOCUMENTATION / OTHER CONSIDERATIONS (gotchas AIs usually miss).
+4. **`/generate-prp INITIAL.md`** — research codebase + docs → write a **PRP** (Product Requirements Prompt): blueprint with steps, validation gates, tests, confidence score. Lives under `PRPs/`.
+5. **`/execute-prp PRPs/….md`** — load PRP → plan → implement → validate → iterate until gates pass.
+
+Repo layout (abridged): `.claude/commands/{generate,execute}-prp.md`, `PRPs/templates/prp_base.md`, `examples/`, `CLAUDE.md`, `INITIAL.md`.
+
+### Token-savings fit (how to use without bloating)
+
+| Do | Why |
+| --- | --- |
+| Keep **always-on** rules thin; put feature context in the **PRP file** for that task | Avoids Pattern 4 always-on tax every unrelated turn |
+| Run **generate-prp** and **execute-prp** in **separate sessions** (or clear between) when research dumps are huge | Same as Plan → fresh implement / Pattern 2 |
+| Prefer **examples + validation gates** over pasting whole repos into chat | Targeted exploration (Pattern 8) beats blind dumps |
+| Treat completion quality as the win; **measure** tokens/cost | More upfront context can raise one-session tokens while cutting failed retries — trajectory bill, not sticky-note bill |
+
+**Not a substitute for:** MCP hygiene, Explore subagents for noisy search, or prune-first compact (Patterns 1, 7, 10).
+
+**INITIAL.md skeleton** (pasteable): see [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md#initialmd-context-engineering-skeleton).
 
 ## Example prompts (real-world)
 
