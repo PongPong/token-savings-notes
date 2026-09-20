@@ -32,6 +32,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | DeusData/codebase-memory-mcp | https://github.com/DeusData/codebase-memory-mcp · arXiv:2603.27277 | “10× fewer tokens, 2.1× fewer tool calls vs. file-by-file exploration” (31 repos). README: five structural queries “~3,400 tokens vs ~412,000” (**99.2%** reduction claim). | **Self-reported / preprint**; verify on your harness |
 | Graphify Labs | https://github.com/Graphify-Labs/graphify | “maps your entire project (code, docs, PDFs, images, videos) into a knowledge graph you can query instead of grepping through files.” Code: local tree-sitter; “LLM credits **0**” for graph build vs per-token systems (benchmark table). | no universal session-token %; code-map credits **0** (author bench) |
 | fast-jev-compaction (tamaratran) | https://github.com/tamaratran/fast-jev-compaction | “never rewrites anything… only deletes tool calls and tool results Jev says are no longer needed”; Claude Code plugin replaces compaction summary when reduction enough; else fallback. `reductionRatio` = char cut, not a published token-%. | No universal token-% in README |
+| llm-engineer-toolkit (KalyanKS-NLP) | https://github.com/KalyanKS-NLP/llm-engineer-toolkit | “curated list of 120+ LLM libraries category wise.” Token-relevant categories: Routers, Cache, Memory, Monitoring, Prompts (compression), Structured Outputs. | Catalog only — no toolkit-wide savings % |
 
 ---
 
