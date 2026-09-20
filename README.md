@@ -19,6 +19,7 @@ Private playbook for cutting LLM and agent token spend (presentation + team prac
 Engineer triggers the refresh. Update:
 
 1. New X/web tips in `SOURCES.md` (credible accounts; include CN-language when relevant)
+1b. Skim [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) Monitoring / Prompts / Routers / Cache for new libs (catalog only)
 2. Metering tools in `NOTES.md`
 3. Savings cheat sheet only when new attributed figures appear
 4. Companions (`EXAMPLE-PROMPTS`, `ORCH-CASES`, `MODE-MATRIX`, `TYPESAFE-JEV`, `SPEAKER-NOTES`) if content moved
