@@ -214,7 +214,7 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 
 **Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md)
 
-**One-line fit:** Keep frontier models for writing and hard reasoning; let Jev handle fast classify / route / verify / keep-or-drop-tool-result steps (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
+**One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent); prompt/state I/O in TYPESAFE-JEV §9) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
 
 ## Case studies: one agent vs multi-agent
 
