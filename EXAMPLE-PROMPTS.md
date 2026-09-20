@@ -587,4 +587,23 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 
 **Count:** 26 prompts (1: 3 · 2: 5 · 3: 4 · 4: 4 · 5: 3 · 6: 5 · 7: 5)
 
+### INITIAL.md (context-engineering skeleton)
+
+**Source:** [coleam00/Context-Engineering-Intro](https://github.com/coleam00/Context-Engineering-Intro) — `INITIAL.md` / `INITIAL_EXAMPLE.md`. Not a Facebook share.
+
+```markdown
+## FEATURE:
+[Specific functionality and requirements — not a one-liner]
+
+## EXAMPLES:
+[Point at files under examples/ and what to mimic (structure, not blind copy)]
+
+## DOCUMENTATION:
+[API docs, library guides, MCP resources, schemas]
+
+## OTHER CONSIDERATIONS:
+[Auth, rate limits, gotchas AI assistants commonly miss]
+```
+
+Then: `/generate-prp INITIAL.md` → `/execute-prp PRPs/….md` (prefer separate sessions if research is noisy). Full workflow in NOTES **Context engineering (PRP workflow)**.
 
