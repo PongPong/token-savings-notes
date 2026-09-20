@@ -22,6 +22,7 @@ Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH
 - [Practical real-world examples (house + field)](#practical-real-world-examples-house-field)
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
+- [Library catalog: llm-engineer-toolkit](#library-catalog-llm-engineer-toolkit)
 - [Sources](#sources)
 - [Gaps](#gaps)
 - [Team practice (standing)](#team-practice-standing)
@@ -88,6 +89,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 4/5):** Quota/price lever (anshuc 40–70% self-reported; Terra −49% cost). Cold-boundary only.
 **What people do:** Haiku / Luna / Gemini for search, plans, scaffolding. Opus / Astra / Sonnet for hard coding and irreversible work. Route at session or cold boundaries — not every turn.  
 **Why it saves:** Frontier rates on grep/rename/test-scaffold waste money.  
+**Catalog:** Routers in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) (e.g. RouteLLM) — verify cost claims upstream.
 **Caveat:** Mid-session model switches bust prompt cache; uncached cheap can beat cached frontier only if measured.
 
 
@@ -101,6 +103,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 4/5):** Cache reads ~10% of input price; one bust forces full-price re-read.
 **What people do:** Static system + tools first. Dynamic stuff in messages. Don’t shuffle tools or swap models mid-session. Cache-safe compaction forks.  
 **Why it saves:** Cache reads ~10% of input price. One prefix byte change can force full-price re-read of the whole history.
+**Catalog:** semantic query cache (e.g. GPTCache) under Cache in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) — separate from Anthropic prompt-cache prefix hygiene; vendor 10× claim is **self-reported**.
 
 
 ### 6. Context compaction (`/compact`, mid-session summarize) — ★★★☆☆ (3/5)
@@ -197,6 +200,8 @@ Agents already log turns. These tools read those files:
 1. Keep a **status line** on while coding.
 2. Once a week run **`npx ccusage@latest daily`** (or your dashboard) and note cache-read share + top sessions.
 3. Only use `/context` when you need a one-shot breakdown inside an active chat.
+
+**Also see:** [llm-engineer-toolkit → LLM Monitoring](https://github.com/KalyanKS-NLP/llm-engineer-toolkit#llm-monitoring) for Helicone / Opik / Phoenix / agenttrace and peers (catalog only — verify before adopting).
 
 **Weekly refresh:** re-check links and new metering tools each Monday with the rest of this playbook.
 
@@ -401,6 +406,27 @@ Summary figures that belong on the deck are also on the **Savings cheat sheet** 
 
 **Deck use:** cite as **measured caution** against installing “token saver” wrappers as automatic wins. Prefer replay-your-own-tasks. Do not present −49% Terra as fewer tokens.
 
+
+## Library catalog: llm-engineer-toolkit
+
+Curated index of **120+ LLM libraries** by category — not a token-saver itself. Use it to **discover** tools that map onto this playbook.
+
+**Repo:** [KalyanKS-NLP/llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) (~10.8k★, Apache-2.0; refreshed often).
+
+| Token-savings angle (NOTES) | Toolkit categories to open first | Examples listed there (catalog descriptions — verify upstream) |
+| --- | --- | --- |
+| Cheap-model routing | Application Development → **Routers** | RouteLLM (“save LLM costs… route simpler queries to cheaper models”); OpenRoutiQ |
+| Prompt-cache / repeat query cost | Application Development → **Cache** | GPTCache (vendor claim in catalog: “Slash Your LLM API Costs by 10x” — **self-reported**, not our measurement) |
+| External memory vs stuffing the window | Application Development → **Memory** | mem0, Letta (MemGPT), Memoripy, Tree Ring Memory, Memobase |
+| Meter without `/context` | **LLM Monitoring** | Helicone, Opik, Phoenix, Evidently, **agenttrace** (coding-agent traces/costs/tokens), OrcaReplay, traceAI, AgentOps |
+| Short / compressed prompts | **LLM Prompts** | LLMLingua, Selective Context, PCToolkit (prompt compression); DSPy / Promptimizer (optimize, not always shorter) |
+| Structured / constrained output (less narration waste) | **LLM Structured Outputs** | Instructor, Outlines, Guidance, LMQL, Jsonformer |
+| Multi-API + gateways (routing / fallbacks) | Multi API Access | LiteLLM, Portkey AI Gateway, Bifrost |
+| Agents / orch (isolation ≠ cheaper) | **LLM Agents** | CrewAI, LangGraph, AutoGen, Smolagents, … — still apply NOTES Agent Teams / Explore caveats |
+
+**How to use with this pack:** Pick a category above → open the toolkit table → only adopt a library after you meter it (status line / `ccusage` / dashboard). Do **not** copy catalog marketing % onto the Savings cheat sheet unless you have an attributed measurement.
+
+**Related hubs by same curator:** [Prompt Engineering Techniques Hub](https://github.com/KalyanKS-NLP/Prompt-Engineering-Techniques-Hub) · [LLM Survey Papers Collection](https://github.com/KalyanKS-NLP/LLM-Survey-Papers-Collection).
 
 ## Sources
 
