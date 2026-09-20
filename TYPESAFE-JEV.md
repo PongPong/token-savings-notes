@@ -80,6 +80,28 @@ Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “
 **Why it fits:** Sub-second latency makes per-keystroke AI feasible where a frontier LLM would not.  
 **Source:** Flavio editor / feed-filter demos; TypeSafe real-time use-case list.
 
+
+## Use case: Verbatim context compaction (fast-jev-compaction)
+
+**Problem:** Built-in `/compact` asks an LLM to **summarize** old turns. Summaries are lossy — file paths, exact errors, constraints, and commands can disappear even when still needed.
+
+**Pattern:** [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (`tamaratran/fast-jev-compaction`) — npm library + Claude Code plugin. Jev scores each historical **tool call** and **tool result** (`noul` keep-call / keep-result). Then: keep both, keep call + truncate result, or drop both. **User and assistant text stay verbatim and in order.** Newest `preserveRecentMessages` (default 6) and the first message are pinned. Claude Code hook swaps in the pruned transcript for `/compact` / auto-compact when reduction is enough; otherwise falls back to the built-in summary.
+
+**Also:** LiteLLM documents a TypeSafe Jev compaction guardrail that can replace stale tool results with a short notice before the model call ([blog](https://docs.litellm.ai/blog/typesafe-jev-compaction)).
+
+**Why it fits NOTES:** Same family as Pattern 7 (prune tool exhaust first) and a safer alternative to Pattern 6’s summary-only compact. Uses Jev as the cheap decision layer instead of a frontier summarize pass.
+
+**Measure:** Library reports character `reductionRatio` and stats — **no universal token-% in the README**. Include Jev request cost when comparing on/off. Do not invent deck percentages.
+
+**Install (Claude Code plugin, from README):**
+```bash
+# needs Claude Code 2.1.274+ function hooks
+# ~/.claude/settings.json env: CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1, TYPESAFE_API_KEY=...
+claude plugin marketplace add tamaratran/fast-jev-compaction
+claude plugin install fast-jev-compaction@fast-jev-compaction
+```
+Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your own harness.
+
 ## How it maps onto this playbook
 
 | NOTES idea | Jev angle |
@@ -87,6 +109,7 @@ Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “
 | Cheap-model routing | Route with Jev, then run Luna/Haiku vs Opus/Astra |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
+| Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
 | Metering | Log `usage.input_tokens` from System One responses in the same weekly `ccusage` habit |
 | STE100 / Concise | Orthogonal — Jev returns no narration to trim |
 
@@ -113,4 +136,4 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, and new cookbooks each Monday with the rest of the token-savings notes.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
