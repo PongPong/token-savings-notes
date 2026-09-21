@@ -27,6 +27,7 @@
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
 - [Library catalog: llm-engineer-toolkit](#library-catalog-llm-engineer-toolkit)
+- [Generative UI token hygiene (json-render)](#generative-ui-token-hygiene-json-render)
 - [Sources](#sources)
 - [Gaps](#gaps)
 - [Team practice (standing)](#team-practice-standing)
@@ -67,6 +68,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | RTK (shell compress) | Vendor **60–90%** of *command output*; bill often **~0 / +5%** | Vendor vs JetBrains/Quesma/bisonbear2 **disputed** | Don’t cite 60–90% as bill |
 | codebase-memory-mcp | Author **10×** / **~99%** vs file-by-file explore | Preprint / README **self-reported** | Verify on your harness |
 | Graphify (knowledge graph skill) | Query graph instead of grepping; code AST map uses **0** LLM credits (README benchmark table) | Graphify README / BENCHMARKS — **no total-session token %** | Prefer when docs+code; compare vs codebase-memory-mcp below |
+| Jev Ultrafast (indexed DOM + Jev) | Author eval **n=3 pairs** (same Mercury helper): median **9.450 s → 7.092 s** (~**25%** lower **runtime**); TypeSafe reqs **22 → 17**; browser protocol **1,092 → 101**. Demo **7.073 s**. **No TypeSafe billed $ / no universal session token-%** | [jev-ultrafast `docs/performance.md`](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) **author / small-n** (sign-test p=0.25) | Runtime & request counts — **not** a token-% |
 | tgrep vs rg | Up to **~52×** faster (latency) | microsoft/tgrep benches | Token win is indirect |
 | Agent Teams / heavy subagent fan-out | **~7× more** tokens; small fan-out **2.6×–5.9× more** | Anthropic **official**; Systima **measured** | Savings = *avoid* this |
 | Stacked levers (MCP + clear + terse + …) | Combined “**~80%**” / $74→$11 weekends | Hasan **self-reported** | Not transferable as a guarantee |
@@ -219,14 +221,16 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 
 **Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) (includes **open-weights Laya** alternative).
 
-**One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent); prompt/state I/O in TYPESAFE-JEV §9) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings). Open-weights alt: [Laya](https://github.com/NandhaKishorM/laya) (same `choice`/`score`/`noul` shape; Apache 2.0 — see TYPESAFE-JEV).
+**One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent) §9; live web [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) §11) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings). Open-weights alt: [Laya](https://github.com/NandhaKishorM/laya) (same `choice`/`score`/`noul` shape; Apache 2.0 — see TYPESAFE-JEV).
 
 
 ## Computer-use token hygiene
 
 GUI agents burn tokens when **every** click goes through a frontier model + screenshot. Prefer: plan once with a strong model; score local form/clicks with a **System One** specialist or Jev/Laya Choice over code-listed elements; use structured a11y/DOM over pixels when you can; skip already-filled fields; use an API/connector instead of the GUI when one exists.
 
-**Details + CUA-S1 Show HN:** [TYPESAFE-JEV.md §10](./TYPESAFE-JEV.md#10-computer-use--specialist-system-one-for-local-gui-decisions-cua-s1).
+**Live web sibling:** [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) — page → indexed element table; Jev picks operation + target in **one** request; a small LLM writes text only on `TYPE_TEXT`; default loop has **no screenshots**. Author runtime/request counts (not a token-%) live on the Savings cheat sheet.
+
+**Details:** [CUA-S1 §10](./TYPESAFE-JEV.md#10-computer-use--specialist-system-one-for-local-gui-decisions-cua-s1) · [Jev Ultrafast §11](./TYPESAFE-JEV.md#11-browser-use-jev-ultrafast--indexed-dom--jev-optarget).
 
 ## Case studies: one agent vs multi-agent
 
@@ -306,6 +310,8 @@ Percentages for slides: use the **Savings cheat sheet** only. This section is fo
 - Aakash Gupta / Anthropic internal Tool Search 134k→5k (85%) — via VentureBeat, not a peer paper.
 - Community “30–50% from `/clear`” (Atticus Li) — attributed, not reproduced here.
 - Rulestack / Jo Do: `ENABLE_TOOL_SEARCH=auto:N` on a large window can undo Tool Search (1M ctx, `auto:5` loaded ~40k defs). Prefer unset/`true` when the goal is a small prompt.
+- Jev Ultrafast: author ~**25%** lower **runtime** (n=3 pairs, sign-test p=0.25); TypeSafe reqs 22→17; protocol 1,092→101. **Not** a session token-%. No TypeSafe billed $ in their note.
+- json-render: constrained catalog JSON vs freeform UI dumps — **no published token-%**; do not invent one.
 
 ### Measured / product-backed (still context-specific)
 - Anthropic staff: 7+ MCP servers → 67k+ tokens.
@@ -476,13 +482,23 @@ Curated index of **120+ LLM libraries** by category — not a token-saver itself
 | External memory vs stuffing the window | Application Development → **Memory** | mem0, Letta (MemGPT), Memoripy, Tree Ring Memory, Memobase |
 | Meter without `/context` | **LLM Monitoring** | Helicone, Opik, Phoenix, Evidently, **agenttrace** (coding-agent traces/costs/tokens), OrcaReplay, traceAI, AgentOps |
 | Short / compressed prompts | **LLM Prompts** | LLMLingua, Selective Context, PCToolkit (prompt compression); DSPy / Promptimizer (optimize, not always shorter) |
-| Structured / constrained output (less narration waste) | **LLM Structured Outputs** | Instructor, Outlines, Guidance, LMQL, Jsonformer |
+| Structured / constrained output (less narration waste) | **LLM Structured Outputs** | Instructor, Outlines, Guidance, LMQL, Jsonformer; generative UI: [json-render](#generative-ui-token-hygiene-json-render) (catalog JSON, **no published token-%**) |
 | Multi-API + gateways (routing / fallbacks) | Multi API Access | LiteLLM, Portkey AI Gateway, Bifrost |
 | Agents / orch (isolation ≠ cheaper) | **LLM Agents** | CrewAI, LangGraph, AutoGen, Smolagents, … — still apply NOTES Agent Teams / Explore caveats |
 
 **How to use with this pack:** Pick a category above → open the toolkit table → only adopt a library after you meter it (status line / `ccusage` / dashboard). Do **not** copy catalog marketing % onto the Savings cheat sheet unless you have an attributed measurement.
 
 **Related hubs by same curator:** [Prompt Engineering Techniques Hub](https://github.com/KalyanKS-NLP/Prompt-Engineering-Techniques-Hub) · [LLM Survey Papers Collection](https://github.com/KalyanKS-NLP/LLM-Survey-Papers-Collection).
+
+## Generative UI token hygiene (json-render)
+
+**Repo:** [vercel-labs/json-render](https://github.com/vercel-labs/json-render) (~17.8k★ as of 2026-09-21, **Apache-2.0**, TypeScript) · [json-render.dev](https://json-render.dev).
+
+Vercel Labs **Generative UI** framework: the model emits JSON constrained to a **predefined component/action catalog** (Zod schemas). Renderers cover React / Vue / Svelte / Solid / RN / Next / PDF / email / ink and peers — the lesson is the catalog, not the package list.
+
+**Token-savings angle:** Constrained structured UI JSON beats freeform HTML / JSX / markdown UI dumps. The catalog shrinks the decision space. SpecStream streams the spec for progressive render. Same family as toolkit **LLM Structured Outputs** and NOTES prompt hygiene.
+
+**House rule:** Prefer a small catalog + JSON spec over asking the model to write UI code. **No published universal token-%** in the README — do not invent one. Optional skeleton: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md#json-render-catalog-prompt-skeleton). Docs also mention **experimental TypeSafe Jev composition** (unreleased) — [json-render.dev/docs/jev](https://json-render.dev/docs/jev).
 
 ## Sources
 

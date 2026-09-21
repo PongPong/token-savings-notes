@@ -42,6 +42,8 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | ClaudeCodeLab (CN) | https://claudecode-lab.com/zh/blog/claude-code-token-optimization/ | `/usage` metering; lean CLAUDE.md; MCP off when CLI suffices; subagent caveat (isolates noise, still spends its own context). | scout / CN — **no new cheat-sheet %** |
 | ofox.ai (CN) — 5 strategies 2026 | http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/ | Stacked levers (cache, model tier, context hygiene, thinking budget, hooks/subagents/Batch). Author claims bill to **10–40%** of prior (title also says 60–90%). | **self-reported stacked** — do **not** put 60–90% on the cheat sheet as a new universal figure (same class as Hasan stacked caveat) |
 | CUA-S1 / trycua (Show HN) | https://news.ycombinator.com/item?id=49767564 · https://github.com/trycua/cua | System One specialist for computer-use form decisions (USE/CHECK/CLICK/SKIP); ~706k params; author: 7–9 ms local vs 260–280 ms hosted Jev; form-task accuracy claims vs Jev (**specialist fine-tuned**). | Computer-use token pattern; no universal session token-% |
+| Jev Ultrafast (Browser Use × TypeSafe) | https://github.com/browser-use/jev-ultrafast (~14.5k★, MIT) · [docs/performance.md](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) | Dynamic indexed action space: page → element table; Jev picks operation + target in one request; small LLM writes text only on `TYPE_TEXT`; default loop **no screenshots**. Demo Zürich→London **7.073 s**. Matched n=3: median **9.450 s → 7.092 s** (~25% lower **runtime**); TypeSafe reqs **22 → 17**; protocol **1,092 → 101**; sign-test p=0.25. Recording: 17 Jev reqs; median Jev ~178 ms; TypeSafe 90,558 in / 6,325 out tokens; **no billed TypeSafe $**; OpenRouter helper **$0.00006272** for two calls. | **Author eval / small-n**; runtime & request counts — **not** a session token-% |
+| json-render (Vercel Labs) | https://github.com/vercel-labs/json-render (~17.8k★, Apache-2.0) · https://json-render.dev | Generative UI: AI emits JSON constrained to a predefined component/action catalog (Zod). SpecStream. Constrained catalog JSON ≫ freeform HTML/JSX/markdown UI dumps. | **No published universal token-%** — do not invent one |
 
 ---
 
@@ -74,6 +76,8 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 - [Sleev](https://sleev.ai) — local multi-harness context proxy (`sleev` CLI); related to OpenCode DCP
 - [Claude Code Token 优化指南 · ClaudeCodeLab (CN)](https://claudecode-lab.com/zh/blog/claude-code-token-optimization/) — Apr 2026 (updated Jun 2026) — `/usage`, lean CLAUDE.md, MCP off, subagent caveat
 - [Claude Code Token 优化 2026：5 个策略 · ofox.ai (CN)](http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/) — 13 May 2026 — stacked levers; author **10–40% of prior** (**self-reported stacked**; not a new cheat-sheet figure)  
+- [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) — GitHub (Browser Use × TypeSafe; indexed DOM + Jev op/target); [performance.md](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) author eval
+- [json-render](https://github.com/vercel-labs/json-render) — GitHub (Vercel Labs Generative UI); [json-render.dev](https://json-render.dev)  
 
 ---
 
@@ -108,6 +112,8 @@ Web search pass (Europe/London). `site:x.com` still empty; X search URLs still r
 - Cursor Dynamic Context Discovery (Jediah Katz, 6 Jan 2026) — product A/B **46.9%** fewer total agent tokens on MCP-calling runs. Was missing from NOTES; now on the cheat sheet.
 - OpenCode DCP live README — related project **Sleev** (`sleev` CLI). DCP still works; no Sleev % cited.
 - CN scout (reaffirm only; **no new cheat-sheet %**): [ClaudeCodeLab](https://claudecode-lab.com/zh/blog/claude-code-token-optimization/) (`/usage`, lean CLAUDE.md, MCP off, subagent caveat); [ofox.ai ZH](http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/) stacked levers, author bill to 10–40% of prior (**self-reported stacked** — do not promote 60–90% as a new universal figure).
+- [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (~14.5k★) — indexed DOM + Jev op/target; author runtime/request counts on NOTES cheat sheet (**not** a token-%).
+- [json-render](https://github.com/vercel-labs/json-render) (~17.8k★) — catalog-constrained generative UI JSON; **no published token-%**.
 
 ---
 **Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
