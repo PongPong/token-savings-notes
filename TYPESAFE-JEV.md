@@ -68,6 +68,30 @@ pip install laya
 # Router(preload=True) for production; or laya.load("convaiinnovations/laya")
 ```
 
+### Apple Silicon: laya-mlx
+
+**Repo:** [mizorewww/laya-mlx](https://github.com/mizorewww/laya-mlx) (~3.8k★ as of ~2026-09-22, **Apache-2.0**, Python) · PyPI `laya-mlx` · HF `aac6fef/laya-mlx`, `aac6fef/laya-multilingual-mlx`, `aac6fef/laya-typed-decisions-mlx` · [README.zh-CN.md](https://github.com/mizorewww/laya-mlx/blob/main/README.zh-CN.md) (CN-audience note).
+
+**What it is:** Independent **native MLX** runtime for the same Laya `choice` / `score` / `noul` shape on **Apple Silicon**. No text generation. No PyTorch or Transformers runtime. No cloud API for inference. **Not** official Convai Innovations. This repo is inference + conversion; RLCD and fine-tuning stay upstream.
+
+**Requires:** Apple Silicon, Python 3.11+, macOS 14+.
+
+**Author latency** (M3 Max, FP16, [BENCHMARKS.md](https://github.com/mizorewww/laya-mlx/blob/main/BENCHMARKS.md) — attribute; **not** a token-%):
+
+- One short EN question: P50 **13.42 ms** / P95 **13.92 ms**. Multilingual: P50 **7.39 ms** / P95 **7.79 ms**.
+- 50-question throughput: EN **146.8 q/s**, multilingual **395.0 q/s** (`batch_size=64` for that measurement; API default is 16).
+- Peak MLX alloc, one short question: **943.6 MiB** EN / **687.6 MiB** multilingual.
+- **0 output tokens** (decision heads, not autoregressive).
+- Port fidelity: **63/63** validation questions matched the upstream selected answer in FP32 and FP16 (**378/378** comparisons). Fixture fidelity, not universal accuracy.
+- Snake demo exists. Figures above are the one-question API bench, not Snake frame time. Optional optimize path (author): **75.40 moves/s** on a paired M3 Max test — gameplay latency, not a token-%.
+
+```bash
+pip install laya-mlx
+# laya.load("aac6fef/laya-mlx"); CLI: laya-mlx predict
+```
+
+**House rule:** Keep upstream Laya for weights, Router, and fine-tune. Use **laya-mlx** on a Mac for local MLX inference. Do **not** put these ms / q/s figures on the Savings cheat sheet as a session token-%.
+
 ## Real-world use cases (agents + products)
 
 ### 1. Model / task routing (agent middleware)
@@ -267,7 +291,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
 | Metering | Log `usage.input_tokens` from System One responses in the same weekly `ccusage` habit |
-| Open-weights / offline decisions | [Laya](https://github.com/NandhaKishorM/laya) (`choice`/`score`/`noul`, Apache 2.0) as Jev-shaped alternative — fine-tune; route multilingual |
+| Open-weights / offline decisions | [Laya](https://github.com/NandhaKishorM/laya) (`choice`/`score`/`noul`, Apache 2.0) as Jev-shaped alternative — fine-tune; route multilingual. On Mac: [laya-mlx](#apple-silicon-laya-mlx) native MLX (inference + conversion; independent port) |
 | STE100 / Concise | Orthogonal — Jev returns no narration to trim |
 
 ## Limits (do not ignore)
@@ -276,7 +300,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 - Weak at math, counting, and date arithmetic — do that in code.
 - State should be **small and relevant** (context rot still applies).
 - Early access / waitlist; pin versioned model IDs when you tune thresholds.
-- For an **open-weights** path, see [Laya](#open-weights-alternative-laya) — not a managed API; plan for GPU preload and fine-tuning.
+- For an **open-weights** path, see [Laya](#open-weights-alternative-laya) — not a managed API; plan for GPU preload and fine-tuning. Apple Silicon inference: [laya-mlx](#apple-silicon-laya-mlx).
 - Author speed/cost multiples are **ceilings** — measure your pipeline.
 
 ## Install pointers (agents)
@@ -294,5 +318,5 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev).
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), [laya-mlx](https://github.com/mizorewww/laya-mlx), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev).
 
