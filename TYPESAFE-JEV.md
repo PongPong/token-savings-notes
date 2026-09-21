@@ -22,6 +22,52 @@ Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “
 
 **House rule:** Jev cuts the **decision** slice of the bill. If most spend is long coding context, savings stay small. Measure cost **per solved task**, not only per token (same lesson as NOTES metering + bisonbear2).
 
+
+## Open-weights alternative: Laya
+
+**Repo:** [NandhaKishorM/laya](https://github.com/NandhaKishorM/laya) (~4.0k★, **Apache 2.0**) · PyPI `laya` · HF [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya).
+
+**What it is:** Self-hostable **non-autoregressive System 1** decision engine — same primitive family as TypeSafe Jev (`choice` / `score` / `noul` over a state) in **one forward pass**, no text generation. Multilingual Router picks a checkpoint per request. Position it as an **open-weights / $0 self-hosted** alternative when you cannot or will not call TypeSafe’s closed API.
+
+| | TypeSafe Jev (NOTES default) | Laya (open weights) |
+| --- | --- | --- |
+| Weights / license | Closed API | **Apache 2.0** checkpoints |
+| Cost shape | ~$0.042/MTok input (verify live) | **Self-host** (GPU/CPU your bill) |
+| API shape | `state` + typed questions | Same idea: `predict(state, questions)` |
+| Latency (author / 3P) | Blog ~70–500 ms; 3P p50 often cited ~236–276 ms | README T4: ~**33–40 ms** / 1 q; multilingual ~**7.2 ms/q** batched |
+| Languages | Product focus EN (check live docs) | English + **100+** via `laya-multilingual` + `Router` |
+| High-cardinality Choice | Strong (README: Jev up to ~255 options) | Weaker at default head budget (Banking77); raise `head_max_len` or hierarchical Choice |
+
+### Checkpoints + Router
+
+| Checkpoint | Encoder | Params | Context | Use |
+| --- | --- | --- | --- | --- |
+| `laya` | ModernBERT-large | 421M | 512 | English |
+| `laya-multilingual` | mmBERT-base | 322M | 1024 | 100+ languages (faster) |
+| `laya-typed-decisions` | ModernBERT-large | 421M | 1024 | Typed-decisions workflows |
+| **`Router(preload=True)`** | — | — | — | Detects script/language (&lt;1 ms) → dispatches checkpoint |
+
+**Presets (map to NOTES / Jev use cases):** `laya.router_questions()` (cheap vs frontier), `guard_questions()`, `moderation_questions()`, `triage_questions()`.
+
+### How it maps onto Jev use cases here
+
+Same patterns as §1–§9 and fast-jev-compaction: swap the decision backend when self-hosting is required. Keep **code-listed** Choice options (minecraft-agent style). For compaction / keep-drop tools, you’d reimplement the asker against `agent.predict` / `Router` — Laya is not a drop-in Claude Code plugin.
+
+### Honest limits (from Laya README — do not oversell)
+
+- **Base checkpoints ≈ chance** on typed-decisions zero-shot; fine-tune for domain (typed-decisions FT **0.766** vs published Jev **0.727** — **author table**, different sample/prompt setup; Jev numbers “never measured here”).
+- **&gt;~20–50 Choice options:** default token budget per label is tiny; raise `head_max_len` / `max_len` or split coarse→fine. Jev currently easier out-of-the-box for 50+ options.
+- English checkpoint **collapses** on non-Latin (e.g. Khmer 0.000 @ high confidence) — **always route**; don’t trust raw confidence alone.
+- Fit **temperature** for calibration before gating on confidence (ECE improves a lot after fit).
+- Soft distribution matching and raw ECE: places where published Jev still leads — see their [BENCHMARKS.md](https://github.com/NandhaKishorM/laya/blob/main/BENCHMARKS.md).
+
+**House rule:** Prefer TypeSafe Jev when you want a managed API and high-cardinality Choice without tuning. Prefer **Laya** when you need open weights, offline/VPC, multilingual routing, or $0 inference at the model layer. Measure your own latency and accuracy; don’t put either side’s leaderboard Δ on the Savings cheat sheet as a token-%.
+
+```bash
+pip install laya
+# Router(preload=True) for production; or laya.load("convaiinnovations/laya")
+```
+
 ## Real-world use cases (agents + products)
 
 ### 1. Model / task routing (agent middleware)
@@ -163,12 +209,13 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 
 | NOTES idea | Jev angle |
 | --- | --- |
-| Cheap-model routing | Route with Jev, then run Luna/Haiku vs Opus/Astra |
+| Cheap-model routing | Route with Jev **or open-weights [Laya](https://github.com/NandhaKishorM/laya)**, then run Luna/Haiku vs Opus/Astra |
 | Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra JSON plan sparsely; Jev Choice over code-built `a0…an` actions |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
 | Metering | Log `usage.input_tokens` from System One responses in the same weekly `ccusage` habit |
+| Open-weights / offline decisions | [Laya](https://github.com/NandhaKishorM/laya) (`choice`/`score`/`noul`, Apache 2.0) as Jev-shaped alternative — fine-tune; route multilingual |
 | STE100 / Concise | Orthogonal — Jev returns no narration to trim |
 
 ## Limits (do not ignore)
@@ -177,6 +224,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 - Weak at math, counting, and date arithmetic — do that in code.
 - State should be **small and relevant** (context rot still applies).
 - Early access / waitlist; pin versioned model IDs when you tune thresholds.
+- For an **open-weights** path, see [Laya](#open-weights-alternative-laya) — not a managed API; plan for GPU preload and fine-tuning.
 - Author speed/cost multiples are **ceilings** — measure your pipeline.
 
 ## Install pointers (agents)
@@ -194,4 +242,4 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
