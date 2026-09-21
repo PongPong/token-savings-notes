@@ -616,3 +616,17 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 
 Then: `/generate-prp INITIAL.md` → `/execute-prp PRPs/….md` (prefer separate sessions if research is noisy). Full workflow in NOTES **Context engineering (PRP workflow)**.
 
+### json-render catalog prompt (skeleton)
+
+**Source:** [vercel-labs/json-render](https://github.com/vercel-labs/json-render) — `catalog.prompt()` builds a full system prompt from your Zod catalog. Skeleton only. **No savings %.**
+
+```text
+Emit UI as JSON constrained to this catalog. Do not emit freeform HTML, JSX, or markdown UI.
+
+Components: <names + one-line props>
+Actions: <names>
+
+Return a spec { root, elements }. Each element has type, props, children.
+Use only listed types. Prefer the smallest spec that solves the ask.
+```
+

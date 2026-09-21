@@ -29,7 +29,7 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 | [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) | Pasteable prompts / configs |
 | [ORCH-CASES.md](./ORCH-CASES.md) | One vs multi-agent cases |
 | [MODE-MATRIX.md](./MODE-MATRIX.md) | Ask / Plan / Agent / Debug × context pollution |
-| [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) | TypeSafe Jev (+ open-weights Laya) |
+| [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) | TypeSafe Jev (+ open-weights Laya; CUA-S1 / Jev Ultrafast) |
 | [SPEAKER-NOTES.md](./SPEAKER-NOTES.md) | Short talk track |
 
 ## Weekly refresh (Monday ~09:00 Europe/London)

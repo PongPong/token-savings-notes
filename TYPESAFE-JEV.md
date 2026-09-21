@@ -110,7 +110,7 @@ pip install laya
 **Scenario:** Agent must click one of many page elements, or pick one tool from a list.  
 **Pattern:** Planner LLM sets the goal; Jev Choice over **candidates code already listed** (never invent a DOM node).  
 **Why it fits:** High-cardinality Choice without hallucinated options; TypeSafe Wikiracing demo stress-tests this.  
-**Sources:** TypeSafe Wikiracing / Doom demos; Flavio browser-automation and tool-picker demos (Browserbase cited in LangChain post).
+**Sources:** TypeSafe Wikiracing / Doom demos; Flavio browser-automation and tool-picker demos (Browserbase cited in LangChain post). **Live web loop:** [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) — indexed element table + one Jev request for operation + target (§11).
 
 ### 7. Bulk labeling / map-reduce
 
@@ -179,7 +179,7 @@ questions.action:
 | Harness | `options[Number(choice.slice(1))]` → run that option’s `fn` |
 | Reject | Missing/invalid choice → throw `Invalid JEV action` (no free-form action inventing) |
 
-**Design takeaway for agents:** (1) **Code enumerates** the action set each step — Jev only ranks. (2) **Stringify one shared state** for plan + decide after compaction. (3) **Planner prompt = JSON contract + world rules**; **Jev prompt = short Choice instructions + criteria map**. (4) Sparse frontier calls, dense Jev calls → token/cost shape of cheap leaf / tool-pick (§6).
+**Design takeaway for agents:** (1) **Code enumerates** the action set each step — Jev only ranks. (2) **Stringify one shared state** for plan + decide after compaction. (3) **Planner prompt = JSON contract + world rules**; **Jev prompt = short Choice instructions + criteria map**. (4) Sparse frontier calls, dense Jev calls → token/cost shape of cheap leaf / tool-pick (§6) and the live-web loop in §11.
 
 **Caveats:** Seed/route surveyed; Peaceful for that recording. Related demos cited by author: [typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo), [typesafe-mario](https://github.com/fhshaik/typesafe-mario), [tsai-sc](https://github.com/phyous/tsai-sc).
 
@@ -213,7 +213,27 @@ questions.action:
 
 **Caveats:** Forms-only today; specialist beat Jev after **task-specific** training — not a free general Jev replacement. No universal token-% in the Show HN. Measure your own frontier-call count per form completion.
 
-Related in this pack: §6 browser/tool-pick · §9 minecraft Astra+Jev · [Laya](#open-weights-alternative-laya) for self-hosted S1 · NOTES Patterns 3 / 8 / 10.
+Related in this pack: §6 browser/tool-pick · §9 minecraft Astra+Jev · **§11 Jev Ultrafast** (live web, indexed DOM) · [Laya](#open-weights-alternative-laya) for self-hosted S1 · NOTES Patterns 3 / 8 / 10.
+
+### 11. Browser Use Jev Ultrafast — indexed DOM + Jev op/target
+
+**Repo:** [browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (~14.5k★ as of 2026-09-21, **MIT**, Python). Browser Use × TypeSafe.
+
+**Problem:** The usual browser-agent loop is screenshot (or a huge a11y dump) → frontier LLM thinks → one click → repeat. Most steps are **pick an operation and a visible control**, not novel planning. Text is needed only when a field must be filled.
+
+**Pattern:** Page → **indexed element table** (`[1] button …`). TypeSafe **Jev** picks **operation + element in one request** (speculative target heads; only the matching target executes). A **small LLM writes text only when the operation is `TYPE_TEXT`**. Default loop: **no screenshots** (structured DOM/ARIA snapshot). Ops offered: `CLICK`, `TYPE_TEXT`, `SELECT`, `SCROLL_UP`, `SCROLL_DOWN`, `WAIT`, `DONE`, `BLOCKED`. Code lists only supported ops and targets — same **code-listed Choice** shape as §6 and §9. Sibling of §10 CUA-S1 (forms specialist on local GUI); this one is a **live web** loop.
+
+**Author evidence** ([docs/performance.md](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) — attribute; do **not** invent a token-%):
+
+- Demo: Zürich→London Google Flights **7.073 s** (1×) from one natural-language goal (timing after initial homepage observation; includes text gen, model calls, browser work, loading).
+- Matched comparison (**n=3 pairs**, same Mercury text helper, TypeSafe `jev-1.13.0`): median **9.450 s → 7.092 s** (~**25%** lower **runtime**); median TypeSafe requests **22 → 17**; median browser protocol calls **1,092 → 101**. Optimized arm faster in all three pairs. **Small-n caveat:** two-sided sign-test **p=0.25** — author: not a broad agent benchmark.
+- Recording of that demo: **17** Jev requests; median Jev latency ~**178 ms**; TypeSafe **90,558** input / **6,325** output tokens reported for that run; **no billed $ for TypeSafe** in their note; OpenRouter text-helper **$0.00006272** for two calls. That is the helper charge, not total task cost.
+
+**House rule:** Cite runtime and request/protocol counts as **author eval**. Do **not** put a universal session token-% on the Savings cheat sheet from this repo.
+
+**Limits (author):** common HTML/ARIA only; no full accessible-name algorithm; no shadow roots / frames / canvas / uploads / new tabs / nested scrolling / arbitrary keyboard widgets. `DONE` is not independent proof of success.
+
+Related in this pack: §6 · §9 · §10 CUA-S1 · NOTES [Computer-use token hygiene](./NOTES.md#computer-use-token-hygiene).
 
 ## Use case: Verbatim context compaction (fast-jev-compaction)
 
@@ -242,7 +262,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | --- | --- |
 | Cheap-model routing | Route with Jev **or open-weights [Laya](https://github.com/NandhaKishorM/laya)**, then run Luna/Haiku vs Opus/Astra |
 | Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra JSON plan sparsely; Jev Choice over code-built `a0…an` actions |
-| Computer-use GUI loops | [CUA-S1](https://github.com/trycua/cua) forms specialist (+ Jev/Laya-shaped S1): frontier plans; S1 scores local fill/check/skip — avoid screenshot→LLM every field |
+| Computer-use GUI loops | [CUA-S1](https://github.com/trycua/cua) forms specialist (+ Jev/Laya-shaped S1): frontier plans; S1 scores local fill/check/skip — avoid screenshot→LLM every field. Live web: [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) indexed DOM + one Jev op/target request (§11) |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
@@ -274,5 +294,5 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev).
 
