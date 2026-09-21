@@ -32,7 +32,7 @@ Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH
 
 Default operating checklist for agents and humans. Details live in the sections below.
 
-1. **Turn off unused MCP / tools** — Biggest easy win. Prefer short schemas or Tool Search; one high-signal graph tool beats many idle servers.
+1. **Turn off unused MCP / tools** — Biggest easy win. Prefer short schemas or Tool Search; leave Claude Code Tool Search on (default). One high-signal graph tool beats many idle servers.
 2. **New session for a new task** — `/clear` between unrelated work. `/compact` mid-task around ~60% full with an explicit keep-list (prefer prune-first / [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) over lossy summary when tool exhaust dominates).
 3. **Meter without typing** — Status line while you work; weekly `npx ccusage@latest daily` (see Meter section). Do not live on `/context`.
 4. **Dense edits, format once** — Agent emits dense patches; run the project’s CLI formatter once at the end (never LLM pretty-print).
@@ -48,7 +48,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 
 | Technique | Rough savings (as reported) | Evidence | Notes |
 | --- | --- | --- | --- |
-| MCP hygiene (disable / consolidate / Tool Search) | Schema cut **~60%** (14k→5.7k); Tool Search **~85%** (134k→5k); idle MCP **4–10k** or **67k+** with many servers; PostHog **113k→5k** single exec | Spence **self-measured**; Tool Search **Anthropic internal** via VB; Shuttle / staff / PostHog **self-reported** | Usually the biggest *easy* win |
+| MCP hygiene (disable / consolidate / Tool Search) | Schema cut **~60%** (14k→5.7k); Tool Search **~85%** (134k→5k); idle MCP **4–10k** or **67k+** with many servers; PostHog **113k→5k** single exec; Rulestack **~61k→21k** (~**40k** deferred); Cursor DCD **46.9%** fewer total agent tokens (MCP-calling runs) | Spence **self-measured**; Tool Search **Anthropic internal** via VB; Shuttle / staff / PostHog **self-reported**; Rulestack **self-measured**; Cursor **A/B** | Usually the biggest *easy* win |
 | Lean AGENTS.md / skills on demand | **~2–3k tokens/turn** when skill not loaded | Verma **self-reported** | Always-on tax every turn |
 | `/clear` / new session (unrelated task) | **~30–50%** per-message (community); one case **412k** cleared | Atticus **attributed**; @jcfmunoz **self-reported** | Same task may prefer warm cache |
 | `/compact` ~60% util (not 95%) | No universal %; Shuttle autocompact buffer example 45k→176k free | MindStudio tip; Shuttle **self-reported** | Quality lever more than a fixed % |
@@ -74,8 +74,10 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 Sorted by **rough savings impact** (high → low). Stars = impact estimate from attributed NOTES evidence (not a lab score). Say “practitioners report…” — do not guarantee %.
 
 ### 1. MCP / tool hygiene (fewer tools, short schemas, defer load) — ★★★★★ (5/5)
-**Impact (why 5/5):** Largest easy win: schema cuts ~60% (Spence), Tool Search ~85% internal, idle MCP tens of k.
-**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) or [Graphify](https://github.com/Graphify-Labs/graphify) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.  
+**Impact (why 5/5):** Largest easy win: schema cuts ~60% (Spence), Tool Search ~85% internal, idle MCP tens of k, Cursor DCD **46.9%** on MCP-calling runs (product A/B).
+**What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) or [Graphify](https://github.com/Graphify-Labs/graphify) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.
+**Claude Code `ENABLE_TOOL_SEARCH`:** Leave Tool Search on for first-party hosts (unset or `true`). `auto` / `auto:N` thresholds against **context-window size**, not “keep my prompt small.” On 1M ctx, 5% = 50k, so ~40k defs load upfront and undo the deferral (Rulestack **self-measured**, v2.1.263, 2026-09-09: unset **20,819** vs `false` **60,989** vs `auto:5` **62,319**; ~**40,170** deferred / 88 defs). Claude Code may disable Tool Search on non-first-party `ANTHROPIC_BASE_URL` / older models.
+**Cursor Dynamic Context Discovery** ([product blog](https://cursor.com/blog/dynamic-context-discovery), Jediah Katz, 6 Jan 2026): sync MCP tool descriptions to folders; agent gets names then looks up schemas. A/B on runs that called an MCP tool: **46.9%** fewer total agent tokens (statistically significant; high variance by MCP count). Same post: long tool outputs → files; chat history as files for summarization recovery; Agent Skills; terminal sessions as files.
 **Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
 
@@ -118,7 +120,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 
 ### 7. Context pruning (drop tool exhaust first; summarize last) — ★★★☆☆ (3/5)
 **Impact (why 3/5):** Mechanical prune is free; Jev-guided prune costs a cheap decision call; no single published %.
-**What people do:** Remove stale tool outputs, duplicate file reads, old errors *before* LLM summarization. OpenCode DCP: dedup + purge + optional compress. Atlassian Rovo Dev: structure-aware prune cascade.  
+**What people do:** Remove stale tool outputs, duplicate file reads, old errors *before* LLM summarization. OpenCode DCP: dedup + purge + optional compress. Live DCP README still documents the plugin; it now points at related project **[Sleev](https://sleev.ai)** (`sleev` CLI) — local proxy for Claude Code, Codex, OpenCode. DCP still works; Sleev is a related successor multi-harness proxy. No published savings % here — do not deep-dive without measuring. Atlassian Rovo Dev: structure-aware prune cascade.  
 **Concrete tool — [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)** (`tamaratran/fast-jev-compaction`): npm library + Claude Code plugin. Uses **TypeSafe Jev** to score each historical tool call/result (`noul`: keep call? keep result verbatim?). Actions: keep both, keep call + truncate result (`truncateHeadChars`, default 300), or drop call+result. **Never rewrites** user/assistant text — only deletes/truncates tools. Pins first message + newest `preserveRecentMessages` (default 6). Claude Code hook replaces built-in `/compact` summary when reduction is enough; else falls back to summary. Needs `TYPESAFE_API_KEY`; function hooks flag for Claude Code 2.1.274+. Related: LiteLLM’s TypeSafe Jev compaction guardrail (drop stale tool results before the model call).  
 **Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Jev prune is cheap vs a frontier summarize pass and keeps exact paths/errors. Summary is the fallback.  
 **Caveat:** README publishes `reductionRatio` (chars), not a universal token-%. Include Jev’s own cost when measuring. Do not invent a deck %.
@@ -266,7 +268,8 @@ Do not confuse **approval** modes (Auto-review, acceptEdits, sandbox) with Ask/P
 - Prefer prune of tool exhaust before LLM summary.
 - Start a new session for a new task. Keep related work together.
 - Turn off unused MCP tools. Short schemas beat many near-duplicate tools.
-- Prefer on-demand tool search / deferred schemas when available.
+- Prefer on-demand tool search / deferred schemas when available. Leave Claude Code Tool Search on. Treat `auto:N` as a % of the context window.
+- Cursor folder-based MCP discovery. Product A/B: 46.9% fewer tokens on MCP-calling runs.
 - Keep CLAUDE.md / AGENTS.md short. Load skills only when needed.
 - Route cheap models to explore and triage. Keep frontier for hard steps.
 - Do not switch models mid-warm session unless you accept a cache miss.
@@ -292,11 +295,13 @@ Percentages for slides: use the **Savings cheat sheet** only. This section is fo
 - Shuttle 45k autocompact buffer; Scott Spence 60% MCP schema cut; Verma ~2–3k/turn; Hasan $74→$11 / ~80% combined.
 - Aakash Gupta / Anthropic internal Tool Search 134k→5k (85%) — via VentureBeat, not a peer paper.
 - Community “30–50% from `/clear`” (Atticus Li) — attributed, not reproduced here.
+- Rulestack / Jo Do: `ENABLE_TOOL_SEARCH=auto:N` on a large window can undo Tool Search (1M ctx, `auto:5` loaded ~40k defs). Prefer unset/`true` when the goal is a small prompt.
 
 ### Measured / product-backed (still context-specific)
 - Anthropic staff: 7+ MCP servers → 67k+ tokens.
 - Anthropic blog: mid-session Haiku switch can cost more than staying on Opus (cache rebuild).
 - OpenCode DCP and Atlassian: prune-first architecture described with engineering rationale; not a single published % for all users.
+- Cursor Dynamic Context Discovery (Jediah Katz, 6 Jan 2026): **46.9%** fewer total agent tokens on MCP-calling runs (product A/B; high variance by MCP count).
 
 ### Conflicts to flag on slides
 1. **Fresh chat vs long session:** Clear between *unrelated* tasks. For *same* task, warm prompt cache can make one long session cheaper than many cold starts (Reddit/Claude Code threads; Anthropic caching docs).
@@ -485,10 +490,10 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 - **X.com / Twitter primary access:** WebSearch `site:x.com` empty; X search URLs redirect to login. Browser could open individual public posts (17 Sep 2026 pass). Nitter mirrors failed. See **X primary delta** in [SOURCES.md](./SOURCES.md).
 - **flaviocopes.com** Concise/STE100 article: Cloudflare-blocked on WebFetch; used secondary gists + explainx + search snippets.
-- **OpenCode DCP README:** GitHub fetch returned thin stub; relied on search/docs mirrors for cache-hit notes — confirm on live README before hard-citing 85%/90%.
+- **OpenCode DCP README:** Live README (21 Sep 2026) readable — related **Sleev** pointer; cache-hit ~85% vs ~90% still not on the live file — do not hard-cite those % from the current README.
 - **No independent lab** comparing all patterns head-to-head on one harness. Harness overhead differs (HN table: OpenCode vs Claude Code vs others) — do not over-generalize.
 - **STE100 token savings:** Practitioners describe clarity and shorter sentences; almost no hard token meters for STE100 alone.
-- **Cursor-specific measured savings:** Forum evidence for tool-filter need; fewer hard before/after token audits than Claude Code blogs.
+- **Cursor-specific measured savings:** Cursor blog Dynamic Context Discovery now cited — **46.9%** fewer total agent tokens on MCP-calling runs (product A/B, Jan 2026). Forum evidence for tool-filter need remains; still fewer independent before/after audits than Claude Code blogs.
 
 
 ## Team practice (standing)

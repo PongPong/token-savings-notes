@@ -11,7 +11,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | Claude Academy (official) | https://academy.claude.com/courses/claude-code-101/context-management | “Use `/compact` when you're working on a specific feature… Use `/clear` when you want to start a new feature.” Subagents return “just a summary” to keep primary context clean. | no figure given |
 | MindStudio — `/compact` at 60% | https://www.mindstudio.ai/blog/claude-code-compact-command-context-management | “The better approach: compact at around 60% context utilization, before quality starts degrading.” | no figure given |
 | Atlassian — Rovo Dev pruning | https://www.atlassian.com/blog/development/rovo-dev-keeps-long-sessions-useful | “structure-aware pruning is the better default… LLM-based compaction still has a place as a more aggressive fallback.” | no figure given |
-| OpenCode DCP (GitHub) | https://github.com/opencode-dcp/opencode-dynamic-context-pruning | Prunes stale tool content before LLM send; author notes ~85% cache hit with DCP vs ~90% without (plugin docs / secondary summaries). | cache-hit delta self-reported in docs ecosystem; no universal % savings |
+| OpenCode DCP (GitHub / npm) | https://github.com/Opencode-DCP/opencode-dynamic-context-pruning · https://www.npmjs.com/package/@tarquinen/opencode-dcp | Prunes stale tool content before LLM send; author notes ~85% cache hit with DCP vs ~90% without (plugin docs / secondary summaries — **not** on live README as of 21 Sep 2026). Live README related project: **[Sleev](https://sleev.ai)** (`sleev` CLI) — local proxy for Claude Code, Codex, OpenCode. DCP still works; Sleev is a related successor. | cache-hit delta self-reported in docs ecosystem; no universal %; Sleev **no % cited here** |
 | Thariq Shihipar / Anthropic (via VentureBeat) | https://venturebeat.com/orchestration/claude-code-just-got-updated-with-one-of-the-most-requested-user-features | “Users were documenting setups with 7+ servers consuming 67k+ tokens.” | 67k+ tokens MCP overhead (Anthropic staff, quoted) |
 | Aakash Gupta (via VentureBeat, cites X) | same VentureBeat article | “from ~134k to ~5k in Anthropic’s internal testing. That’s an 85% reduction” (Tool Search). | **self-reported / Anthropic internal** via secondary article |
 | Scott Spence | https://scottspence.com/posts/optimising-mcp-server-context-usage-in-claude-code | Before: 20 tools / 14,214 tokens; after consolidate: 8 tools / 5,663 tokens. “Reduction: 60% fewer tokens!” | **self-measured** 60% on one MCP server; also saw ~66k–82k MCP tokens with many servers enabled |
@@ -36,6 +36,11 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | coleam00 Context-Engineering-Intro | https://github.com/coleam00/Context-Engineering-Intro | Context engineering template: lean CLAUDE.md + examples/ + INITIAL.md → `/generate-prp` → `/execute-prp`. “Most agent failures aren't model failures - they're context failures.” Slogan 10x/100x is advocacy, not a token %. | Quality / completion workflow; measure trajectory cost |
 | rmalde/minecraft-agent | https://github.com/rmalde/minecraft-agent | Astra/Sol → JSON plan; Jev Choice `a0…an` + `compactObservation` state (`models.mjs`). nether-final-08: 131 Jev / 35 Astra (**self-reported**). | Call-ratio / timing self-reported; seed surveyed |
 | Laya (NandhaKishorM / Convai Innovations) | https://github.com/NandhaKishorM/laya | Open-weights non-autoregressive System 1 (`choice`/`score`/`noul`); Apache 2.0; Router + EN/multilingual/typed-decisions checkpoints. Author vs published Jev table (latency/accuracy) — Jev figures third-party, not re-measured in that README. | Self-host alternative to TypeSafe Jev; fine-tune for domain |
+| Jo Do / Rulestack (DEV) | https://dev.to/rulestack/tool-search-hid-40170-tokens-from-our-first-request-auto5-put-them-all-back-2jin | Claude Code v2.1.263, 2026-09-09, four MCP servers + browser extension, 1M ctx. `ENABLE_TOOL_SEARCH` unset **20,819**; `false` **60,989**; `auto:5` **62,319**. Delta default vs false ≈ **40,170** deferred (88 tool defs). `auto:N` thresholds vs context-window size (1M × 5% = 50k → ~40k defs load upfront). | **self-measured** first-request input; not a universal % |
+| Cursor — Dynamic Context Discovery (Jediah Katz) | https://cursor.com/blog/dynamic-context-discovery | MCP: sync tool descriptions to folders; agent gets names then looks up schemas. A/B on runs that called an MCP tool: “this strategy reduced total agent tokens by 46.9% (statistically significant, with high variance based on the number of MCPs installed).” Also: long tool outputs → files; chat history as files; Agent Skills; terminals as files. | **46.9%** total agent tokens, MCP-calling runs — **Cursor A/B** (product-backed) |
+| Sleev | https://sleev.ai | Local proxy / `sleev` CLI for Claude Code, Codex, OpenCode (and other harnesses). Pointed from live OpenCode DCP README as related project. | no % cited here — do not deep-dive without measuring |
+| ClaudeCodeLab (CN) | https://claudecode-lab.com/zh/blog/claude-code-token-optimization/ | `/usage` metering; lean CLAUDE.md; MCP off when CLI suffices; subagent caveat (isolates noise, still spends its own context). | scout / CN — **no new cheat-sheet %** |
+| ofox.ai (CN) — 5 strategies 2026 | http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/ | Stacked levers (cache, model tier, context hygiene, thinking budget, hooks/subagents/Batch). Author claims bill to **10–40%** of prior (title also says 60–90%). | **self-reported stacked** — do **not** put 60–90% on the cheat sheet as a new universal figure (same class as Hasan stacked caveat) |
 
 ---
 
@@ -45,7 +50,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 - [Context management · Claude Academy](https://academy.claude.com/courses/claude-code-101/context-management) — undated course page — docs  
 - [How to Use the /compact Command… (MindStudio)](https://www.mindstudio.ai/blog/claude-code-compact-command-context-management) — 2 Apr 2026 — blog  
 - [Agent Context Pruning · Atlassian Rovo Dev](https://www.atlassian.com/blog/development/rovo-dev-keeps-long-sessions-useful) — 30 Mar 2026 — blog  
-- [opencode-dynamic-context-pruning](https://github.com/opencode-dcp/opencode-dynamic-context-pruning) — GitHub  
+- [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) — GitHub (`@tarquinen/opencode-dcp`); live README related: [Sleev](https://sleev.ai)  
 - [Graphify](https://github.com/Graphify-Labs/graphify) — GitHub (knowledge graph skill)  
 - [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — GitHub  
 - [Claude Code MCP Tool Search · VentureBeat](https://venturebeat.com/orchestration/claude-code-just-got-updated-with-one-of-the-most-requested-user-features) — 15 Jan 2026 — news (cites @Thariq / @AakashGupta / Boris Cherny on X)  
@@ -62,7 +67,12 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 - [ASD-STE100 output style gist (L1nefeed)](https://gist.github.com/L1nefeed/4164ecaaf77879e76dca3c06f142f1c2) — GitHub gist  
 - [Claude Code Concise output style · explainx.ai](https://explainx.ai/blog/claude-code-concise-output-style-config-august-2026) — Aug 2026 — secondary blog  
 - [Router vs prompt caching · frankchu / DEV](https://dev.to/frankchu/i-built-a-router-to-cut-my-claude-code-bill-and-prompt-caching-was-the-whole-problem-3ifl) — DEV blog  
-- [Claude usage limit hit too fast · ofox.ai](https://ofox.ai/blog/claude-code-usage-limit-hit-too-fast-2026/) — blog (anecdotal 7× / 85%)  
+- [Claude usage limit hit too fast · ofox.ai](https://ofox.ai/blog/claude-code-usage-limit-hit-too-fast-2026/) — blog (anecdotal 7× / 85%)
+- [Tool search hid 40,170 tokens · Jo Do / Rulestack (DEV)](https://dev.to/rulestack/tool-search-hid-40170-tokens-from-our-first-request-auto5-put-them-all-back-2jin) — ~11 Sep 2026 — blog (**self-measured**)
+- [Dynamic context discovery · Cursor (Jediah Katz)](https://cursor.com/blog/dynamic-context-discovery) — 6 Jan 2026 — product blog (**46.9%** A/B)
+- [Sleev](https://sleev.ai) — local multi-harness context proxy (`sleev` CLI); related to OpenCode DCP
+- [Claude Code Token 优化指南 · ClaudeCodeLab (CN)](https://claudecode-lab.com/zh/blog/claude-code-token-optimization/) — Apr 2026 (updated Jun 2026) — `/usage`, lean CLAUDE.md, MCP off, subagent caveat
+- [Claude Code Token 优化 2026：5 个策略 · ofox.ai (CN)](http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/) — 13 May 2026 — stacked levers; author **10–40% of prior** (**self-reported stacked**; not a new cheat-sheet figure)  
 
 ---
 
@@ -88,6 +98,16 @@ X search URLs all hit login. Individual public posts stayed readable. Nitter fal
 **Slide-worthy adds:** @posthog MCP 113k→5k; @jcfmunoz `/clear` 412K; @bcherny auto-compact is reliability not cost; @meta_alchemist 70–80% (self-reported); @ellen_in_sf 40–60% output.
 
 
+## X/web primary delta (21 Sep 2026)
+
+Web search pass (Europe/London). `site:x.com` still empty; X search URLs still redirect to login. No new X primary quotes this week.
+
+**Web (merged into NOTES / this file):**
+- Rulestack / Jo Do DEV (~11 Sep 2026) — `ENABLE_TOOL_SEARCH` first-request tokens **self-measured** (20,819 / 60,989 / 62,319; ~40,170 deferred). `auto:N` vs window-size caveat.
+- Cursor Dynamic Context Discovery (Jediah Katz, 6 Jan 2026) — product A/B **46.9%** fewer total agent tokens on MCP-calling runs. Was missing from NOTES; now on the cheat sheet.
+- OpenCode DCP live README — related project **Sleev** (`sleev` CLI). DCP still works; no Sleev % cited.
+- CN scout (reaffirm only; **no new cheat-sheet %**): [ClaudeCodeLab](https://claudecode-lab.com/zh/blog/claude-code-token-optimization/) (`/usage`, lean CLAUDE.md, MCP off, subagent caveat); [ofox.ai ZH](http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/) stacked levers, author bill to 10–40% of prior (**self-reported stacked** — do not promote 60–90% as a new universal figure).
+
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-18. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
 

@@ -11,7 +11,7 @@ The clever next prompt is rarely the main cost.
 
 1. **Meter without typing** — Use a live status line and a log tool like `ccusage`. Do not rely on typing `/context` every few minutes.
 2. **Context picture** — System rules + MCP tools + memory + messages all share one window.
-3. **MCP hygiene** — Cite Anthropic staff “67k+” multi-server setups and Spence’s before/after. Action: turn off unused servers; shorten schemas; defer load when you can.
+3. **MCP hygiene** — Cite Anthropic staff “67k+” multi-server setups, Spence’s before/after, Rulestack ~40k deferred (**self-measured**), and Cursor DCD **46.9%** on MCP-calling runs (product A/B). Action: turn off unused servers; shorten schemas; leave Tool Search on; defer load when you can.
 4. **Sessions** — `/clear` between unrelated tasks. `/compact` mid-task with an explicit keep-list around 60% full, not at the ceiling.
 5. **Standing docs** — Keep AGENTS.md / CLAUDE.md short. Load skills only when needed (Verma’s per-turn tax story).
 6. **Models** — Cheap model for explore and plan. Strong model for hard implement. Do not switch mid-warm session (cache rebuild). Cite Anthropic’s Haiku-switch lesson and @anshuc Luna+Astra only as self-reported.
