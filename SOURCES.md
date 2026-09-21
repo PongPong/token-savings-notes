@@ -35,6 +35,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | llm-engineer-toolkit (KalyanKS-NLP) | https://github.com/KalyanKS-NLP/llm-engineer-toolkit | “curated list of 120+ LLM libraries category wise.” Token-relevant categories: Routers, Cache, Memory, Monitoring, Prompts (compression), Structured Outputs. | Catalog only — no toolkit-wide savings % |
 | coleam00 Context-Engineering-Intro | https://github.com/coleam00/Context-Engineering-Intro | Context engineering template: lean CLAUDE.md + examples/ + INITIAL.md → `/generate-prp` → `/execute-prp`. “Most agent failures aren't model failures - they're context failures.” Slogan 10x/100x is advocacy, not a token %. | Quality / completion workflow; measure trajectory cost |
 | rmalde/minecraft-agent | https://github.com/rmalde/minecraft-agent | Astra/Sol → JSON plan; Jev Choice `a0…an` + `compactObservation` state (`models.mjs`). nether-final-08: 131 Jev / 35 Astra (**self-reported**). | Call-ratio / timing self-reported; seed surveyed |
+| Laya (NandhaKishorM / Convai Innovations) | https://github.com/NandhaKishorM/laya | Open-weights non-autoregressive System 1 (`choice`/`score`/`noul`); Apache 2.0; Router + EN/multilingual/typed-decisions checkpoints. Author vs published Jev table (latency/accuracy) — Jev figures third-party, not re-measured in that README. | Self-host alternative to TypeSafe Jev; fine-tune for domain |
 
 ---
 
