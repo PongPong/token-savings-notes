@@ -41,6 +41,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | Sleev | https://sleev.ai | Local proxy / `sleev` CLI for Claude Code, Codex, OpenCode (and other harnesses). Pointed from live OpenCode DCP README as related project. | no % cited here — do not deep-dive without measuring |
 | ClaudeCodeLab (CN) | https://claudecode-lab.com/zh/blog/claude-code-token-optimization/ | `/usage` metering; lean CLAUDE.md; MCP off when CLI suffices; subagent caveat (isolates noise, still spends its own context). | scout / CN — **no new cheat-sheet %** |
 | ofox.ai (CN) — 5 strategies 2026 | http://ofox.ai/zh/blog/claude-code-token-optimization-5-strategies-2026/ | Stacked levers (cache, model tier, context hygiene, thinking budget, hooks/subagents/Batch). Author claims bill to **10–40%** of prior (title also says 60–90%). | **self-reported stacked** — do **not** put 60–90% on the cheat sheet as a new universal figure (same class as Hasan stacked caveat) |
+| CUA-S1 / trycua (Show HN) | https://news.ycombinator.com/item?id=49767564 · https://github.com/trycua/cua | System One specialist for computer-use form decisions (USE/CHECK/CLICK/SKIP); ~706k params; author: 7–9 ms local vs 260–280 ms hosted Jev; form-task accuracy claims vs Jev (**specialist fine-tuned**). | Computer-use token pattern; no universal session token-% |
 
 ---
 
