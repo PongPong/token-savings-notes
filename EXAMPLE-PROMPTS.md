@@ -346,6 +346,15 @@ https://mcp.posthog.com/mcp?tools=dashboard-get
 ```
 - **When:** Configuring MCP URLs; choosing CLI/exec mode over full tools mode.
 
+- **Label:** paraphrased (config values from Claude Code docs / Rulestack measurement)
+- **Source:** Claude Code Tool Search env; Rulestack / Jo Do measurement https://dev.to/rulestack/tool-search-hid-40170-tokens-from-our-first-request-auto5-put-them-all-back-2jin
+- **Prompt:**
+```json
+"env": { "ENABLE_TOOL_SEARCH": true }
+```
+Values: **unset** / **`true`** = defer schemas (prefer this when the goal is a small first prompt). **`false`** = load all tool defs upfront. **`auto`** / **`auto:N`** = threshold vs **context-window size** (default `auto` = 10%). On a 1M window, `auto:5` is 50k — ~40k defs can load upfront and undo Tool Search. Claude Code may disable Tool Search on non-first-party `ANTHROPIC_BASE_URL` / older models; leave it on for first-party hosts.
+- **When:** Claude Code `settings.json` when MCP/tool defs bloat the first request. Prefer default unset/`true`; use `auto`/`auto:N` only if you understand the % of *your* window.
+
 - **Label:** verbatim
 - **Source:** AINews (citing Claude Code subagent frontmatter), https://www.ainews.tech/blog/route-claude-code-subagents-to-cheaper-models
 - **Prompt:**
@@ -585,7 +594,7 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 - flaviocopes Concise article: WebFetch timeout; Concise rules covered via wmedia + explainx instead.
 - Category 1: no strong public fenced “dense edit then prettier once” prompt found on the fetched blogs — **house** fills that gap.
 
-**Count:** 26 prompts (1: 3 · 2: 5 · 3: 4 · 4: 4 · 5: 3 · 6: 5 · 7: 5)
+**Count:** 27 prompts (1: 3 · 2: 5 · 3: 5 · 4: 4 · 5: 3 · 6: 5 · 7: 5)
 
 ### INITIAL.md (context-engineering skeleton)
 
