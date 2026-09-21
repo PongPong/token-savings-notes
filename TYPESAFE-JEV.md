@@ -184,6 +184,37 @@ questions.action:
 **Caveats:** Seed/route surveyed; Peaceful for that recording. Related demos cited by author: [typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo), [typesafe-mario](https://github.com/fhshaik/typesafe-mario), [tsai-sc](https://github.com/phyous/tsai-sc).
 
 
+
+### 10. Computer use — specialist System One for local GUI decisions (CUA-S1)
+
+**Problem:** Computer-use agents are token-hungry. A common loop is: screenshot (or huge a11y dump) → frontier LLM thinks → one click → repeat. Most steps are **local** decisions (“put this value in this box”, CHECK / CLICK / SKIP), not novel planning.
+
+**Pattern ([trycua/cua](https://github.com/trycua/cua) · Show HN [CUA-S1](https://news.ycombinator.com/item?id=49767564)):** Keep a **System 2** frontier model for plan / explore / recover. Hand **narrow, recurring** decisions to a **System One** scorer that only ranks options you already listed — no token-by-token generation, no inventing field values, no screenshot in the specialist path.
+
+**CUA-S1-FORMS (first release, author claims):**
+- ~**706k** params · ~**2.8 MB** checkpoint · MIT under `libs/cua-s1`
+- Input: structured form elements + candidate values from a document (not screenshots)
+- Output: per-element scores → USE value / CHECK / CLICK / SKIP; your code orders actions; Cua Driver executes
+- vs hosted Jev on their form task (**author eval, specialist fine-tuned for this convention**): whole set **99.7%** vs **83.6%**; action steps **100%** vs **96%**; leave-filled-alone **100%** vs **74%**
+- Latency (**author**): **7–9 ms** local score vs **260–280 ms** hosted Jev call (network included; not end-to-end form time)
+
+**Token-savings fit (computer use generally):**
+
+| Lever | Why it cuts spend |
+| --- | --- |
+| **Frontier only for plan / stuck** | Don’t re-pay Astra/Opus for every checkbox |
+| **Code-listed actions + S1 Choice** | Same as minecraft-agent / Jev tool-pick — model cannot invent DOM nodes |
+| **Structured state ≫ full screenshots** | Accessibility / DOM / form schema beats pixels for fill loops |
+| **Skip already-filled** | Cheap SKIP policy beats another LLM turn |
+| **Prefer connector/API over GUI** | When a form has an API, skip computer-use entirely |
+| **Crop / lower res / one focused window** | If you must send pixels, shrink the image tax |
+
+**Design takeaway:** Space between brittle scripts and full agent loops — layout varies enough that scripts hurt, but the **decision set stays narrow**. General agent hits novelty → specialists (forms, later other apps) score local steps.
+
+**Caveats:** Forms-only today; specialist beat Jev after **task-specific** training — not a free general Jev replacement. No universal token-% in the Show HN. Measure your own frontier-call count per form completion.
+
+Related in this pack: §6 browser/tool-pick · §9 minecraft Astra+Jev · [Laya](#open-weights-alternative-laya) for self-hosted S1 · NOTES Patterns 3 / 8 / 10.
+
 ## Use case: Verbatim context compaction (fast-jev-compaction)
 
 **Problem:** Built-in `/compact` asks an LLM to **summarize** old turns. Summaries are lossy — file paths, exact errors, constraints, and commands can disappear even when still needed.
@@ -211,6 +242,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | --- | --- |
 | Cheap-model routing | Route with Jev **or open-weights [Laya](https://github.com/NandhaKishorM/laya)**, then run Luna/Haiku vs Opus/Astra |
 | Cheap orch + strong leaf | [minecraft-agent](https://github.com/rmalde/minecraft-agent): Astra JSON plan sparsely; Jev Choice over code-built `a0…an` actions |
+| Computer-use GUI loops | [CUA-S1](https://github.com/trycua/cua) forms specialist (+ Jev/Laya-shaped S1): frontier plans; S1 scores local fill/check/skip — avoid screenshot→LLM every field |
 | MCP / tool hygiene | Jev is **not** another fat MCP schema dump — call it from code/middleware with thin state |
 | Subagents | Prefer Jev for tiny judgments; reserve subagents for real isolation / parallelism |
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
@@ -242,4 +274,5 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists.
+
