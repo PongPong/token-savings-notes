@@ -1,34 +1,45 @@
 # token-savings-notes
 
-Private playbook for cutting LLM and agent token spend (presentation + team practice).
+Public playbook for cutting LLM and agent token spend.
 
-## Files
+## Two doors
 
-- `NOTES.md` — main playbook (Do this week, savings cheat sheet, patterns, metering, stubs)
-- `EXAMPLE-PROMPTS.md` — full pasteable prompt / config library
-- `ORCH-CASES.md` — one-agent vs multi-agent case write-ups
-- `SOURCES.md` — named quotes, link list, X primary delta
-- `MODE-MATRIX.md` — Ask/Plan/Agent/Debug/Explore modes × context pollution
-- `TYPESAFE-JEV.md` — TypeSafe Jev (System One) use cases
-- `SPEAKER-NOTES.md` — short talk track
+| You use… | Start here |
+| --- | --- |
+| **Browser chat only** (ChatGPT / Claude.ai / Gemini / …) | [guides/browser-chat.md](./guides/browser-chat.md) |
+| **CLI / coding agents** (Claude Code, Cursor, OpenCode, Codex, …) | [guides/cli-agents.md](./guides/cli-agents.md) |
 
-**Numbers board:** only the Savings cheat sheet in `NOTES.md` holds deck %. Companions explain how; they do not invent new percentages.
+Both doors share one **core**. The pattern map (browser action vs CLI action vs core link):
+
+→ [guides/MAP.md](./guides/MAP.md)
+
+### No-duplication rule
+
+- Patterns, caveats, attributed figures, and quotes live **once** in core (`NOTES.md`, `SOURCES.md`, companions).
+- Guides only apply the idea in that UI and **link** to core pattern IDs.
+- `EXAMPLE-PROMPTS.md` stays one file — guides link to sections; do not paste full fences twice.
+- Before merge: same quote/% in two files → delete from the guide, link to core.
+
+## Core (shared source of truth)
+
+| File | Role |
+| --- | --- |
+| [NOTES.md](./NOTES.md) | Do this week, **Savings cheat sheet** (single numbers board), Top patterns, metering, stubs |
+| [SOURCES.md](./SOURCES.md) | Named quotes, link list, X primary delta |
+| [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) | Pasteable prompts / configs |
+| [ORCH-CASES.md](./ORCH-CASES.md) | One vs multi-agent cases |
+| [MODE-MATRIX.md](./MODE-MATRIX.md) | Ask / Plan / Agent / Debug × context pollution |
+| [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) | TypeSafe Jev (+ open-weights Laya) |
+| [SPEAKER-NOTES.md](./SPEAKER-NOTES.md) | Short talk track |
 
 ## Weekly refresh (Monday ~09:00 Europe/London)
 
-Engineer triggers the refresh. Update:
+1. New X/web tips → **SOURCES.md** only (credible accounts; include CN-language when useful).
+2. New pattern/figure → **NOTES.md** Savings cheat sheet + pattern section **once**.
+3. Update [guides/MAP.md](./guides/MAP.md) row or a **thin** guide lever if the UI action changed.
+4. Companions only if content moved (ORCH / MODE / Jev / prompts / speaker).
+5. **Never** maintain twin encyclopedias in `guides/`.
 
-1. New X/web tips in `SOURCES.md` (credible accounts; include CN-language when relevant)
-1b. Skim [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) Monitoring / Prompts / Routers / Cache for new libs (catalog only)
-2. Metering tools in `NOTES.md`
-3. Savings cheat sheet only when new attributed figures appear
-4. Companions (`EXAMPLE-PROMPTS`, `ORCH-CASES`, `MODE-MATRIX`, `TYPESAFE-JEV`, `SPEAKER-NOTES`) if content moved
-5. Do this week checklist if default ops changed
+Scout rules: creditable X only; not eng-only; include Chinese users; no invented %.
 
-Do not invent quotes or percentages. Mark self-reported claims.
-
-## Scout rules (for researchers)
-
-- Credible X/Twitter accounts only — skip engagement bait
-- Not eng-only — product, research, ops, education OK when about token spend
-- Include Chinese users / CN-language posts when useful
+Last edit: 2026-09-21.
