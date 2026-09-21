@@ -1,10 +1,12 @@
 # Token-savings research pack — cut LLM/agent token spend
 
-**For:** Engineer / Pong L presentation  
-**Prepared:** 17 Sep 2026 (Europe/London); restructured 18 Sep 2026  
+**For:** Engineer / Pong L presentation · public pack  
+**Prepared:** 17 Sep 2026 (Europe/London); audience split 2026-09-21  
 **Rule:** No invented quotes or numbers. % claims marked self-reported. **Savings cheat sheet** = single numbers board.
 
-Companions: [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH-CASES.md) · [SOURCES.md](./SOURCES.md) · [MODE-MATRIX.md](./MODE-MATRIX.md) · [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) · [SPEAKER-NOTES.md](./SPEAKER-NOTES.md)
+**Audiences:** [Browser chat guide](./guides/browser-chat.md) · [CLI agents guide](./guides/cli-agents.md) · [Pattern map](./guides/MAP.md) (browser vs CLI actions — no duplicated tips).
+
+**Companions:** [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) · [ORCH-CASES.md](./ORCH-CASES.md) · [SOURCES.md](./SOURCES.md) · [MODE-MATRIX.md](./MODE-MATRIX.md) · [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) · [SPEAKER-NOTES.md](./SPEAKER-NOTES.md)
 
 ---
 
@@ -484,7 +486,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), and [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions in sync: `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), and [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
