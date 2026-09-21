@@ -17,6 +17,7 @@
 - [Top patterns (by savings impact)](#top-patterns-by-savings-impact)
 - [Meter token use without typing /context](#meter-token-use-without-typing-context)
 - [TypeSafe Jev (System One)](#typesafe-jev-system-one)
+- [Computer-use token hygiene](#computer-use-token-hygiene)
 - [Case studies: one agent vs multi-agent](#case-studies-one-agent-vs-multi-agent)
 - [Agent modes × context pollution](#agent-modes-context-pollution)
 - [Slide bullets (STE100-style)](#slide-bullets-ste100-style)
@@ -219,6 +220,13 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 **Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) (includes **open-weights Laya** alternative).
 
 **One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent); prompt/state I/O in TYPESAFE-JEV §9) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings). Open-weights alt: [Laya](https://github.com/NandhaKishorM/laya) (same `choice`/`score`/`noul` shape; Apache 2.0 — see TYPESAFE-JEV).
+
+
+## Computer-use token hygiene
+
+GUI agents burn tokens when **every** click goes through a frontier model + screenshot. Prefer: plan once with a strong model; score local form/clicks with a **System One** specialist or Jev/Laya Choice over code-listed elements; use structured a11y/DOM over pixels when you can; skip already-filled fields; use an API/connector instead of the GUI when one exists.
+
+**Details + CUA-S1 Show HN:** [TYPESAFE-JEV.md §10](./TYPESAFE-JEV.md#10-computer-use--specialist-system-one-for-local-gui-decisions-cua-s1).
 
 ## Case studies: one agent vs multi-agent
 
