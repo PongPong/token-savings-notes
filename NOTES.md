@@ -212,9 +212,9 @@ Agents already log turns. These tools read those files:
 
 Jev is a **decision** model (not a chat/coding LLM): state + typed questions → probabilities. Use it to replace expensive LLM calls for routing, guardrails, and triage — and for **verbatim context prune** via [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (Patterns 6–7).
 
-**Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md)
+**Details and real-world use cases:** [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) (includes **open-weights Laya** alternative).
 
-**One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent); prompt/state I/O in TYPESAFE-JEV §9) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings).
+**One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent); prompt/state I/O in TYPESAFE-JEV §9) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings). Open-weights alt: [Laya](https://github.com/NandhaKishorM/laya) (same `choice`/`score`/`noul` shape; Apache 2.0 — see TYPESAFE-JEV).
 
 ## Case studies: one agent vs multi-agent
 
@@ -479,7 +479,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), and [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions in sync: `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-20. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), and [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction). Update the **Savings cheat sheet** only when new attributed figures appear. Keep companions in sync: `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
