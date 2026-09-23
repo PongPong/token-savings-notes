@@ -1,6 +1,6 @@
 # Agent modes × context pollution
 
-Companion to `NOTES.md`. Research date **2026-09-18 (Europe/London)**. Official docs preferred. No invented modes — gaps marked *not found*.
+Companion to `NOTES.md`. Research date **2026-09-18 (Europe/London)**. Official docs preferred. No invented modes — gaps marked *not found*. Codex Astra/Sol cross-link added **2026-09-24**.
 
 **Pollution** = tool exhaust (search hits, file dumps, shell/test logs, traces) that lands in the **main** conversation every later turn re-pays.
 
@@ -97,6 +97,8 @@ Source: [opencode.ai/docs/agents](https://opencode.ai/docs/agents/)
 
 ### Codex
 **Plan** via `/plan` or Shift+Tab — gather context and plan; not execute until ended. No named Ask mode; use `/permissions` read-only. Subagents offload bounded work. `/review` for diffs. Debug mode **not found**.
+
+**Practitioner cross-link (not a product mode):** @BradGroux pins Astra for plan, review, and coordination, and GPT-5.6 Sol for implementation threads. See [ORCH Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). **No token-%.** Parallel threads can raise total spend (rank 8 below).
 
 Source: [best practices](https://developers.openai.com/codex/learn/best-practices)
 

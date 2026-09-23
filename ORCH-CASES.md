@@ -129,6 +129,25 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 
 ---
 
+### Case 12 — Astra plans + Sol implements (Brad Groux)
+
+- **Verdict:** Astra coordinates; Sol implements, when the slices are independent
+- **Combination:** Codex. GPT-6 Astra (up to Extra High) plans, delegates, and reviews. Three to five GPT-5.6 Sol threads (generally Medium) implement.
+- **Scenario:** Existing code, a backlog, and a UI where a correct edit can still be the wrong edit. One Astra chat must understand, plan, write, fix, and hold every rule.
+- **Wrong pattern (author):** “Man make fire.” A bigger prompt on the strongest model. One-shot habit on a project that already has code. Hook: “I was asking Eisenhower to storm the beaches of Normandy himself.”
+- **Practice (author, Codex):**
+  1. Astra reads project docs, the code, and open issues. It builds a dependency-ordered plan. It splits that plan into **3–5 independent** Sol assignments.
+  2. Each Sol task gets the relevant context, a defined scope, the files or interfaces it owns, the guardrails that apply (not a vague “follow SOPs”), completion evidence, an isolated branch, and a focused PR.
+  3. Astra reviews the diff and the evidence, fixes findings, merges when authorized, and starts the next dependency-ready work. Optional: a quiet 15-minute coordination check. It notifies only for a decision or a meaningful result.
+  4. Serialize tasks that would both own the same migration or shared interface.
+  5. “Done” means review, then merge when authorized, then update the preview. An open PR is not done. A draft the owner asked to keep open stays a draft.
+- **Author honesty:** Work comes back faster because several independent pieces move at once. **3–5 threads means concurrency.** No controlled before-and-after benchmark. Dependencies, review, and integration still take time.
+- **Token fit (house):** Same family as Case 2 (cheap orch + strong leaf) and Case 10 (plan, then implement), and as [MODE-MATRIX](./MODE-MATRIX.md): frontier model for plan, review, and coordination; Sol (Medium) for scoped implementation. The article states no price. Avoid one long frontier session that does every role. Parallel leaves can raise total tokens versus one serial session (Cases 3–4; Agent Teams). The author’s claim is workflow, intervention, and concurrency.
+- **Source:** @BradGroux (Brad Groux), shown 6:49 PM · 22 Sep 2026 (author-local display) — https://x.com/BradGroux/status/2102455199583334625 — article “I Think I’ve Been Using GPT-6 Astra Wrong” (https://x.com/i/article/2102449008232861696). Row in [SOURCES.md](./SOURCES.md).
+- **Savings:** **no controlled benchmark / no token-%**
+
+---
+
 ### STE100 bullets (deck)
 
 - One agent wins for sequential, dependent, or tiny work.
@@ -138,6 +157,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 - Measured caution: small fan-outs used 2.6×–5.9× more input than sequential (Systima).
 - Lived caution: one agent per finding paid ~47k startup each; most tokens were boot (issue #77834).
 - Cheap orch + strong leaf can save *premium* quota (@anshuc; self-reported 40–70%).
+- Astra can plan and review while Sol implements 3–5 independent scopes (Brad Groux). That claim is concurrency. No token-%.
 - Pin Explore / workers to Haiku. Do not inherit Opus for search.
 - Do not switch models mid-session to “save.” Use a Haiku subagent or a cold boundary.
 - Parent must receive summaries only (NOTES P.7). Never paste full worker logs up.
@@ -157,6 +177,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 | Want cheaper model mid-task | **Haiku subagent or new session** | Mid-thread `/model` busts cache |
 | Plan then implement across models | **Cheap plan session → clear → strong implement** | Cold boundary; Shuttle pattern |
 | Safety / write blast radius | **Read-only planner + scoped executor** | Isolation for risk, not thrift |
+| Existing backlog; independent slices; one frontier chat does every role | **Astra plan/review + Sol leaves** (Brad Groux, Case 12) | Concurrency and less role-switching. Serialize shared interfaces. No measured token cut. |
 | Unsure | **One agent first; add workers only when clutter or parallelism is real** | Default away from tax |
 
 ---
@@ -176,6 +197,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 | ~7× subagent-heavy (Atticus cites Anthropic) | attributed | https://atticusli.com/blog/posts/save-tokens-claude-code/ |
 | Gemini plan → Claude implement | practitioner blog | https://www.shuttle.dev/blog/2025/10/16/claude-code-best-practices |
 | Router vs cache lock | practitioner | https://dev.to/frankchu/i-built-a-router-to-cut-my-claude-code-bill-and-prompt-caching-was-the-whole-problem-3ifl |
+| Astra plans; 3–5 Sol threads implement; no benchmark | author practice (X article) | https://x.com/BradGroux/status/2102455199583334625 |
 | 省token / Haiku explore / 产出多复用少 | CN practitioner + docs | https://juejin.cn/post/7644429323654529024 |
 
 **Conflicts already in NOTES §4:** Subagents save *parent* context but can raise *total* tokens; cheap per-turn routers can raise spend vs cold-boundary handoff.

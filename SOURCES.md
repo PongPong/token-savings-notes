@@ -45,6 +45,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | CUA-S1 / trycua (Show HN) | https://news.ycombinator.com/item?id=49767564 · https://github.com/trycua/cua | System One specialist for computer-use form decisions (USE/CHECK/CLICK/SKIP); ~706k params; author: 7–9 ms local vs 260–280 ms hosted Jev; form-task accuracy claims vs Jev (**specialist fine-tuned**). | Computer-use token pattern; no universal session token-% |
 | Jev Ultrafast (Browser Use × TypeSafe) | https://github.com/browser-use/jev-ultrafast (~14.5k★, MIT) · [docs/performance.md](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) | Dynamic indexed action space: page → element table; Jev picks operation + target in one request; small LLM writes text only on `TYPE_TEXT`; default loop **no screenshots**. Demo Zürich→London **7.073 s**. Matched n=3: median **9.450 s → 7.092 s** (~25% lower **runtime**); TypeSafe reqs **22 → 17**; protocol **1,092 → 101**; sign-test p=0.25. Recording: 17 Jev reqs; median Jev ~178 ms; TypeSafe 90,558 in / 6,325 out tokens; **no billed TypeSafe $**; OpenRouter helper **$0.00006272** for two calls. | **Author eval / small-n**; runtime & request counts — **not** a session token-% |
 | json-render (Vercel Labs) | https://github.com/vercel-labs/json-render (~17.8k★, Apache-2.0) · https://json-render.dev | Generative UI: AI emits JSON constrained to a predefined component/action catalog (Zod). SpecStream. Constrained catalog JSON ≫ freeform HTML/JSX/markdown UI dumps. | **No published universal token-%** — do not invent one |
+| @BradGroux (Brad Groux) | https://x.com/BradGroux/status/2102455199583334625 · article https://x.com/i/article/2102449008232861696 | Shown **6:49 PM · 22 Sep 2026** (author-local display). Hook: “I’ve been complaining about GPT-6 Astra, but I've been using it wrong… Now Astra plans, delegates to 3-5 Sol threads, and reviews the work.” Article “I Think I’ve Been Using GPT-6 Astra Wrong”: one Astra thread that understands, plans, writes, and fixes (“Man make fire”) vs Astra (up to Extra High) planning and reviewing, with **3–5** independent GPT-5.6 Sol threads (generally Medium) implementing. “Done” includes review, merge when authorized, and a preview update. Faster because independent pieces move at once. | **no controlled benchmark / no token-%** |
 
 ---
 
@@ -80,6 +81,7 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 - [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) — GitHub (Browser Use × TypeSafe; indexed DOM + Jev op/target); [performance.md](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) author eval
 - [json-render](https://github.com/vercel-labs/json-render) — GitHub (Vercel Labs Generative UI); [json-render.dev](https://json-render.dev)
 - [laya-mlx](https://github.com/mizorewww/laya-mlx) — GitHub (independent MLX runtime for Laya on Apple Silicon); [BENCHMARKS.md](https://github.com/mizorewww/laya-mlx/blob/main/BENCHMARKS.md); [README.zh-CN.md](https://github.com/mizorewww/laya-mlx/blob/main/README.zh-CN.md)  
+- [@BradGroux — I Think I’ve Been Using GPT-6 Astra Wrong](https://x.com/BradGroux/status/2102455199583334625) — shown 6:49 PM · 22 Sep 2026 (author-local) — X article [2102449008232861696](https://x.com/i/article/2102449008232861696); Astra plans/reviews, 3–5 Sol threads implement; **no controlled benchmark / no token-%**
 
 ---
 
@@ -119,5 +121,17 @@ Web search pass (Europe/London). `site:x.com` still empty; X search URLs still r
 - [laya-mlx](https://github.com/mizorewww/laya-mlx) (~3.8k★, Apache-2.0) — independent Apple Silicon MLX port of Laya; author M3 Max FP16 latency in the table above (**ms / 0 output tokens — not a session token-%**). [README.zh-CN.md](https://github.com/mizorewww/laya-mlx/blob/main/README.zh-CN.md). Not official Convai.
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
+
+## X primary delta (24 Sep 2026)
+
+Public post (X search still login-walled). Creditable author: @BradGroux (Brad Groux). The date below is the author-local display.
+
+| Pattern | Handle | Date | Link | Quote / claim | Savings |
+| --- | --- | --- | --- | --- | --- |
+| Astra plans + Sol implements | @BradGroux | shown 6:49 PM · 22 Sep 2026 (author-local display) | https://x.com/BradGroux/status/2102455199583334625 · https://x.com/i/article/2102449008232861696 | “I was asking Eisenhower to storm the beaches of Normandy himself. Now Astra plans, delegates to 3-5 Sol threads, and reviews the work.” Article: drop the one-shot “Man make fire” habit on an existing codebase. Astra (up to Extra High) reads docs, code, and open issues; writes a dependency-ordered plan; assigns **3–5 independent** tasks to GPT-5.6 Sol (generally Medium) with scope, owned files, applicable guardrails, evidence, an isolated branch, and a focused PR. Astra reviews, fixes findings, merges when authorized, updates the preview, and starts the next ready work. Overlapping ownership of one migration or shared interface stays serial. Optional quiet 15-minute check notifies only for a decision or a meaningful result. Author: faster because independent pieces move at once; **3–5 threads = concurrency**; dependencies, review, and integration still take time. | **no controlled benchmark / no token-%** |
+
+**House fit:** frontier model for plan, review, and coordination; Sol (Medium) for scoped implementation. Same family as NOTES cheap orch / [MODE-MATRIX](./MODE-MATRIX.md) / [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). The article states no price. Parallel leaves can raise total tokens versus one serial session. The cheat sheet records **no token-%** for this row.
+
+---
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web deltas. Re-check metering tools and **[TYPESAFE-JEV.md](./TYPESAFE-JEV.md)**. Update savings figures only when attributed. Keep `SPEAKER-NOTES.md` in sync if the talk changes. Last edit: 2026-09-24. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
