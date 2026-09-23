@@ -60,6 +60,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | fast-jev-compaction (Jev keep/drop tools) | No universal token-% in README; reports **char** `reductionRatio`; fallback to LLM summary if too little cut | [tamaratran/fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) README; LiteLLM TypeSafe compaction blog | Verbatim prune — not a summary; measure incl. Jev cost |
 | STE100 / Concise / terse output | **No STE100 %**; terse output **30–50%** of *output*; Concise article **40–60%** output | Hasan / @ellen_in_sf **self-reported**; STE100 gists **no figure** | Cuts narration, not whole bill |
 | Cheap orch + strong leaf | Quota **40–70%** (was 80–90%); demo **50%→7%** weekly Plus | @anshuc **self-reported**, author-corrected | Premium-quota shape |
+| Astra plan/review + Sol impl (3–5 Codex threads) | **No token-%** (author: concurrency, not a benchmark) | @BradGroux **author practice** | Workflow and less role-switching. Fan-out may raise total tokens. [Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux) |
 | Haiku/cheap Explore leaf (vs inherit Opus) | **~37%** fewer metered tokens (one pair) | Systima **measured** n=1 | Pin leaf model |
 | Cheap plan → clear → strong implement | No single %; Terra-style **−49% cost** / **+6% tokens** | Shuttle; bisonbear2 **measured** | Price ≠ fewer tokens |
 | Prompt-cache hygiene | Cache reads ~**10%** of input price; mid-session model switch can **raise** cost | Anthropic | Protect prefix |
@@ -96,6 +97,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 ### 3. Cheap-model routing (small for triage / explore; big for hard steps) — ★★★★☆ (4/5)
 **Impact (why 4/5):** Quota/price lever (anshuc 40–70% self-reported; Terra −49% cost). Cold-boundary only.
 **What people do:** Haiku / Luna / Gemini for search, plans, scaffolding. Opus / Astra / Sonnet for hard coding and irreversible work. Route at session or cold boundaries — not every turn.  
+**Codex variant (Brad Groux):** Pin Astra (up to Extra High) to plan, review, and coordination. Hand scoped implementation to GPT-5.6 Sol (generally Medium), in 3–5 independent threads. **No token-%.** Full case: [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). Fan-out can still raise total tokens.  
 **Why it saves:** Frontier rates on grep/rename/test-scaffold waste money.  
 **Catalog:** Routers in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) (e.g. RouteLLM) — verify cost claims upstream.
 **Caveat:** Mid-session model switches bust prompt cache; uncached cheap can beat cached frontier only if measured.
@@ -163,7 +165,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 ### 10. Subagents / specialized workers (isolate noise; return summaries) — ★★☆☆☆ (2/5)
 **Impact (why 2/5):** Parent-context win; heavy fan-out can cost ~7× total tokens — use selectively.
 **Cases:** See **Case studies: one agent vs multi-agent orchestration** (when one agent wins vs cheap orch + strong leaf vs Explore/Haiku).
-**What people do:** Spawn workers with clean context for search/research. Parent keeps only the answer. Cheap orchestrator + expensive coding worker is a common Codex pattern (@anshuc).  
+**What people do:** Spawn workers with clean context for search/research. Parent keeps only the answer. Cheap orchestrator + expensive coding worker is a common Codex pattern (@anshuc). The inverse Codex shape is also in use: Astra plans and reviews; Sol implements independent slices ([Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux), @BradGroux). That claim is concurrency, not a measured token cut.  
 **Why it saves (parent):** Exploration junk stays out of the main window.  
 **Caveat:** Each subagent re-pays prompts/tools. Anthropic-cited ~7× for heavy fan-out. Use when isolation value > startup cost.
 
@@ -251,7 +253,10 @@ When to use one agent vs multi-agent (and which combo). Full cases and sources:
 | Want cheaper model mid-task | **Haiku subagent or new session** | Mid-thread `/model` busts cache |
 | Plan then implement across models | **Cheap plan session → clear → strong implement** | Cold boundary; Shuttle pattern |
 | Safety / write blast radius | **Read-only planner + scoped executor** | Isolation for risk, not thrift |
+| Existing backlog; independent slices; one frontier chat does every role | **Astra plan/review + Sol leaves** (Brad Groux) | Concurrency and less role-switching. Serialize shared interfaces. No measured token cut. |
 | Unsure | **One agent first; add workers only when clutter or parallelism is real** | Default away from tax |
+
+**Astra plans + Sol implements (Brad Groux):** In Codex, Astra (up to Extra High) reads docs, code, and open issues, then assigns 3–5 independent tasks to GPT-5.6 Sol (generally Medium). Astra reviews, merges when authorized, updates the preview, and starts the next ready work. Author: faster because independent work moves at once; **no controlled benchmark**. House fit: frontier model for plan, review, and coordination; Sol (Medium) for scoped implementation — same family as cheap orch and [MODE-MATRIX](./MODE-MATRIX.md). The article states no price. Parallel threads can raise total tokens (Agent Teams). Full write-up: [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). Source row: [SOURCES](./SOURCES.md).
 
 ---
 
@@ -312,6 +317,7 @@ Percentages for slides: use the **Savings cheat sheet** only. This section is fo
 - Rulestack / Jo Do: `ENABLE_TOOL_SEARCH=auto:N` on a large window can undo Tool Search (1M ctx, `auto:5` loaded ~40k defs). Prefer unset/`true` when the goal is a small prompt.
 - Jev Ultrafast: author ~**25%** lower **runtime** (n=3 pairs, sign-test p=0.25); TypeSafe reqs 22→17; protocol 1,092→101. **Not** a session token-%. No TypeSafe billed $ in their note.
 - json-render: constrained catalog JSON vs freeform UI dumps — **no published token-%**; do not invent one.
+- @BradGroux (shown 6:49 PM · 22 Sep 2026, author-local): Astra plans and reviews; 3–5 Sol threads implement. Faster from concurrency. **No controlled benchmark. No token-%.** Parallel threads can cost more total tokens than one serial session.
 
 ### Measured / product-backed (still context-specific)
 - Anthropic staff: 7+ MCP servers → 67k+ tokens.
@@ -436,6 +442,7 @@ Copy-paste prompts and configs (STE100, Concise, MCP off, `/clear`, compact, che
 3. Disable unused MCP before the session — companion §3
 4. `/clear` vs `/compact` decision card — companion §4–5
 5. Explore pinned to Haiku / cheap orch + strong leaf — companion §6
+6. Astra plan + Sol leaf stubs — companion Astra/Sol section (skeletons; full text stays on the X article)
 
 ## Measured study: five “token saving” modes (u/bisonbear2, 2026)
 
@@ -510,7 +517,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), and [laya-mlx](https://github.com/mizorewww/laya-mlx). Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-21. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), and [laya-mlx](https://github.com/mizorewww/laya-mlx). Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-24. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 

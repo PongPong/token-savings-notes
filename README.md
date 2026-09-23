@@ -27,7 +27,7 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 | [NOTES.md](./NOTES.md) | Do this week, **Savings cheat sheet** (single numbers board), Top patterns, metering, stubs |
 | [SOURCES.md](./SOURCES.md) | Named quotes, link list, X primary delta |
 | [EXAMPLE-PROMPTS.md](./EXAMPLE-PROMPTS.md) | Pasteable prompts / configs |
-| [ORCH-CASES.md](./ORCH-CASES.md) | One vs multi-agent cases |
+| [ORCH-CASES.md](./ORCH-CASES.md) | One vs multi-agent cases (incl. Astra plan + Sol leaf) |
 | [MODE-MATRIX.md](./MODE-MATRIX.md) | Ask / Plan / Agent / Debug × context pollution |
 | [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) | TypeSafe Jev (+ open-weights Laya; Apple Silicon [laya-mlx](https://github.com/mizorewww/laya-mlx); CUA-S1 / Jev Ultrafast) |
 | [SPEAKER-NOTES.md](./SPEAKER-NOTES.md) | Short talk track |
@@ -42,4 +42,4 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 
 Scout rules: creditable X only; not eng-only; include Chinese users; no invented %.
 
-Last edit: 2026-09-21.
+Last edit: 2026-09-24.

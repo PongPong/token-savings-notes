@@ -18,7 +18,8 @@ Guides only say **what to click / type in that UI**. If a figure appears twice, 
 | P-UI | [Generative UI / json-render](../NOTES.md#generative-ui-token-hygiene-json-render) | Rare in pure chat. If the product must emit UI, prefer a **small component catalog** over pasting HTML. | Prefer **catalog JSON** (Zod/schema) over freeform HTML/JSX/markdown UI dumps. |
 | P-OW | [Open-weights / offline](../TYPESAFE-JEV.md#open-weights-alternative-laya) · [laya-mlx](../TYPESAFE-JEV.md#apple-silicon-laya-mlx) | N/A (local runtime). | On Apple Silicon: `pip install laya-mlx`, then `laya-mlx predict` for local Laya-shaped decisions. Figures stay in TYPESAFE-JEV. |
 | P10 | [Subagents / workers](../NOTES.md#top-patterns-by-savings-impact) | Rare in pure chat. Use a **second chat** for research; paste only the summary back. | Explore/Plan subagents; return summary only. Isolation ≠ cheaper (see Agent Teams). |
+| P-AS | [Astra plans + Sol implements](../ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux) | No Codex thread pin. Optional: a frontier chat plans; a separate chat does one scoped task; paste the summary back. | Codex: pin **Astra** for plan/review/coord and **GPT-5.6 Sol** (Medium) for leaf impl. [Case 12](../ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). **No token-%.** |
 
 **Also:** [MODE-MATRIX.md](../MODE-MATRIX.md) (Ask/Plan/Agent/Debug) · [ORCH-CASES.md](../ORCH-CASES.md) · [TYPESAFE-JEV.md](../TYPESAFE-JEV.md) · [SPEAKER-NOTES.md](../SPEAKER-NOTES.md).
 
-Last edit: 2026-09-21.
+Last edit: 2026-09-24.

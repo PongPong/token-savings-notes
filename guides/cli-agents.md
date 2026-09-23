@@ -17,6 +17,7 @@ Follow NOTES **Do this week** exactly (MCP off, clear/compact, meter, dense+form
 | What to do in *this* product mode (Ask/Plan/Debug) | [MODE-MATRIX.md](../MODE-MATRIX.md) |
 | One agent vs multi | [ORCH-CASES.md](../ORCH-CASES.md) + NOTES Pattern 10 |
 | Pasteable STE100 / MCP-off / clear cards | [EXAMPLE-PROMPTS.md](../EXAMPLE-PROMPTS.md) |
+| Codex: Astra for plan/review, Sol for leaf | [MAP.md](./MAP.md) row P-AS · [ORCH Case 12](../ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux) |
 | Browser-only coworker | [browser-chat.md](./browser-chat.md) |
 
 CLI column of [MAP.md](./MAP.md) = the action. NOTES = the why and the attributed %.

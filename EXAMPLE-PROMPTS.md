@@ -594,7 +594,40 @@ Config of record: <path to .prettierrc | rustfmt.toml | …>. Align any style cl
 - flaviocopes Concise article: WebFetch timeout; Concise rules covered via wmedia + explainx instead.
 - Category 1: no strong public fenced “dense edit then prettier once” prompt found on the fetched blogs — **house** fills that gap.
 
-**Count:** 27 prompts (1: 3 · 2: 5 · 3: 5 · 4: 4 · 5: 3 · 6: 5 · 7: 5)
+**Count:** 27 prompts (1: 3 · 2: 5 · 3: 5 · 4: 4 · 5: 3 · 6: 5 · 7: 5). The Astra/Sol block below is three skeletons. It is not three more full fences, and it is not the article text.
+
+### Astra/Sol orchestration templates (skeleton)
+
+**Source:** [@BradGroux](https://x.com/BradGroux/status/2102455199583334625) (Brad Groux) — [I Think I’ve Been Using GPT-6 Astra Wrong](https://x.com/i/article/2102449008232861696). Shown 6:49 PM · 22 Sep 2026 (author-local display). Adapt these stubs to your repo. The full templates are in that article. **No token-%.** Case: [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux).
+
+**1. Read the project and divide the work** — Astra
+
+```text
+Read the repo docs, the code, and the open issues.
+Build a dependency-ordered plan.
+Name 3–5 independent tasks: outcome, scope, owned files, guardrails, checks.
+Keep the current UI. Raise product decisions.
+Continue items that do not need those answers.
+```
+
+**2. Delegate to Sol Medium**
+
+```text
+Delegate ready tasks to GPT-5.6 Sol with Medium reasoning.
+State the boundaries, the files owned, and the rules that apply.
+Serialize tasks that share a migration or an interface.
+Require evidence and a focused pull request.
+```
+
+**3. Finish the workflow and keep moving** — Astra
+
+```text
+Review the diff and the evidence. Fix findings.
+Merge when that merge is already authorized. Update the preview.
+A requested draft stays a draft.
+Start the next ready task during review.
+Use a quiet scheduled check-in. Notify only for a decision or a meaningful result.
+```
 
 ### INITIAL.md (context-engineering skeleton)
 
