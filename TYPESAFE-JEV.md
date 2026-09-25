@@ -8,6 +8,8 @@ Short companion to `NOTES.md`. Keep the main playbook thin; put detail here.
 
 **API shape:** `POST /v1/systemone` with `model` (e.g. `jev-latest`), `state`, and `questions` (`noul` / `choice` / `score`). Also via Vercel AI Gateway as `typesafe-ai/jev`.
 
+**Landscape:** [Jev vs djev vs Laya vs OpenJev vs SemIf](#alternatives-landscape-decision-backends) — Hugging Face blog, 23 Sep 2026. Operating-model choice. **Not** a token-%.
+
 ## Why it matters for token spend
 
 Coding agents and chat LLMs burn tokens on **every** routing, guardrail, and “is this urgent?” step. Jev is meant to be a **cheap decision primitive** so the frontier LLM only runs when you need generation or deep reasoning.
@@ -63,6 +65,8 @@ Same patterns as §1–§9 and fast-jev-compaction: swap the decision backend wh
 
 **House rule:** Prefer TypeSafe Jev when you want a managed API and high-cardinality Choice without tuning. Prefer **Laya** when you need open weights, offline/VPC, multilingual routing, or $0 inference at the model layer. Measure your own latency and accuracy; don’t put either side’s leaderboard Δ on the Savings cheat sheet as a token-%.
 
+**Bench note:** [Alternatives landscape](#alternatives-landscape-decision-backends) records the Sep 2026 zero-shot JevBench rank for Laya. Fine-tune for production still stands. That rank is **not** a token-%.
+
 ```bash
 pip install laya
 # Router(preload=True) for production; or laya.load("convaiinnovations/laya")
@@ -91,6 +95,73 @@ pip install laya-mlx
 ```
 
 **House rule:** Keep upstream Laya for weights, Router, and fine-tune. Use **laya-mlx** on a Mac for local MLX inference. Do **not** put these ms / q/s figures on the Savings cheat sheet as a session token-%.
+
+## Alternatives landscape (decision backends)
+
+Five **System One** stacks. Each returns a typed decision (`choice` / `score` / `noul`). None writes prose or code.
+
+**Source:** [Jev ai vs djev vs Laya vs OpenJev vs SemIf: Which Decision Model Should You Use?](https://huggingface.co/blog/sora-2/jev-ai-vs-djev-vs-laya-vs-openjev-vs-semif-which-d) — Hugging Face, **23 Sep 2026**. Blog account: alchemication-pfpt. The article author (sora-2) posted the repo links in the comments. Those links are the ones used below.
+
+The post uses a published **JevBench v1.3.0** snapshot (September 2026). Shared method: **52** systems, **534** decisions (**72** easy / **96** standard / **146** judge / **220** hard). Composite = intelligence + calibration + speed + cost. Treat it as a dated decision aid. It is **not** a product guarantee and **not** a session token-%.
+
+| System | Operating model | Best fit | JevBench composite |
+| --- | --- | --- | --- |
+| **Jev 1.13.0** | Hosted production API. Typed decisions. Calibrated probabilities. Text and JSON. | Managed routing, scoring, guardrails. No GPU to run. | **#1 · 74.4** |
+| **SemIf** | Self-hosted logit reader. Bench config cites Qwen3.5-4B. MIT code. Weights keep their own licences. | Data stays in-network. You own the GPU and the calibration. | **#2 · 73.1** |
+| **djev** | Hosted API. Speed plus native image and camera. Probabilities documented as experimental. | Fast visual prototypes. Confirm preview terms live. | **#3 · 73.0** |
+| **OpenJev** | Self-hosted Jev-compatible `/v1/systemone`. Images. Thinking mode. GPU or Apple Silicon. | Familiar request shape inside your network. | **#11 · 66.4** |
+| **Laya** | Open weights. Self-host. Fine-tune. Detail stays in the [Laya](#open-weights-alternative-laya) section above. | Offline or multilingual **after** you fine-tune. | **#33 · 54.4** |
+
+**Laya rank:** **#33 / 54.4** is the blog’s **zero-shot** aggregate. Hard tier in that comparison: Jev **74.1%** vs Laya **34.1%**. Intelligence **85.7** vs **45.8**. Context: Jev up to **64k** vs Laya **512**. Read #33 as that zero-shot setup. Fine-tuned production use is a different sample — see Honest limits in [Open-weights alternative: Laya](#open-weights-alternative-laya).
+
+What the composite hides (same snapshot; attribute to the HF blog / JevBench):
+
+| Split | Figure | How to read it |
+| --- | --- | --- |
+| Calibration | Jev **82.7** · SemIf **72.6** · djev **65.4** · OpenJev **64.8** | Matters when code routes on a probability |
+| Hard tier, default vs default | Jev **74.1%** · djev **69.5%** · OpenJev **65.5%** · SemIf **59.5%** | Default configs only |
+| OpenJev thinking | **78.2%** hard · **88.0** intelligence | Separate operating point. Do not mix into the default row |
+| Speed axis | djev **91.4** · SemIf **83.7** · Jev **83.3** · OpenJev **83.2** | Latency score, **not** a token-% |
+| Judge tier | SemIf **95.2%** · Jev **94.5%** | SemIf leads this slice |
+
+### djev
+
+**What:** Hosted decision API. Native images, image options, and live camera frames. Typed shapes match the Jev family. [Repo](https://github.com/Davipar/djev-dev). Jev docs from the author comment: [docs.typesafe.ai/introduction](https://docs.typesafe.ai/introduction).
+
+**When:** Speed or visual input is the constraint. You can treat the probability output as experimental until your own set says otherwise.
+
+**Caveats:** Calibration and hard-tier sit below Jev on the snapshot above. Speed axis leads. The blog calls djev a **free preview with announced pricing**. Preview terms change. **Verify live.** This pack does not record a price.
+
+### OpenJev
+
+**What:** Self-hosted server. Compatible `/v1/systemone` request shape. The comparison page: up to **eight** images per request; a **24GB** NVIDIA GPU or Apple Silicon; a thinking mode with its own quality/latency point. [Repo](https://github.com/razorback16/openjev).
+
+**When:** You want images or a Jev-shaped API inside your network, and you will operate the runtime.
+
+**Caveats:** On the **default** comparison, calibration and hard-tier sit below Jev. Speed is close (83.2 vs 83.3). Thinking mode (**78.2%** hard, **88.0** intelligence) is a different setup. Keep it out of default-vs-default claims.
+
+### SemIf
+
+**What:** Open-model logit reader. Primary bench config cites **Qwen3.5-4B**. Code is **MIT**. Upstream weights keep their own licences. Inference stays in your environment. [Repo](https://github.com/TheoLeeCJ/SemIf-OpenJev).
+
+**When:** Data must stay in-network, a GPU is already busy, and the team will fit thresholds per workload.
+
+**Caveats:** Composite is close to Jev (#2, 73.1 vs 74.4). The gap is uneven: SemIf leads the judge tier; Jev leads hard tier (**74.1%** vs **59.5%**) and calibration (**82.7** vs **72.6**). You own the GPU, the serving stack, and calibration.
+
+### Choose by constraint
+
+Start with the constraint that is expensive to change later. Then measure.
+
+| Constraint | First systems to evaluate |
+| --- | --- |
+| Managed production API | **Jev**. Add **djev** when you need images and can accept experimental probabilities. |
+| Native image or camera | **djev**, **OpenJev** |
+| Data stays in your network | **Laya**, **OpenJev**, **SemIf** |
+| Calibrated probabilities for routing | **Jev** first, then **SemIf**. Measure thresholds on your hard cases. |
+| Fine-tune and open weights | **Laya** first (section above). **OpenJev** and **SemIf** when you will run the runtime. |
+| Jev-compatible request shape | **Jev**, **OpenJev** |
+
+**House rule (Pong L / PongPong):** Pick by constraint. Measure thresholds on your hard cases. The composite is a dated decision aid (JevBench v1.3.0, September 2026), not a product guarantee, and **not** a session token-%. Leave these scores off the NOTES Savings cheat sheet.
 
 ## Real-world use cases (agents + products)
 
@@ -292,6 +363,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
 | Metering | Log `usage.input_tokens` from System One responses in the same weekly `ccusage` habit |
 | Open-weights / offline decisions | [Laya](https://github.com/NandhaKishorM/laya) (`choice`/`score`/`noul`, Apache 2.0) as Jev-shaped alternative — fine-tune; route multilingual. On Mac: [laya-mlx](#apple-silicon-laya-mlx) native MLX (inference + conversion; independent port) |
+| Decision-backend chooser | [Alternatives landscape](#alternatives-landscape-decision-backends): Jev, djev, Laya, OpenJev, SemIf. Pick by constraint. Bench scores stay in that section — **not** a token-% |
 | STE100 / Concise | Orthogonal — Jev returns no narration to trim |
 
 ## Limits (do not ignore)
@@ -301,6 +373,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 - State should be **small and relevant** (context rot still applies).
 - Early access / waitlist; pin versioned model IDs when you tune thresholds.
 - For an **open-weights** path, see [Laya](#open-weights-alternative-laya) — not a managed API; plan for GPU preload and fine-tuning. Apple Silicon inference: [laya-mlx](#apple-silicon-laya-mlx).
+- Hosted and self-hosted peers (**djev**, **OpenJev**, **SemIf**): [Alternatives landscape](#alternatives-landscape-decision-backends). Composites are a dated bench, **not** a token-%.
 - Author speed/cost multiples are **ceilings** — measure your pipeline.
 
 ## Install pointers (agents)
@@ -318,5 +391,5 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), [laya-mlx](https://github.com/mizorewww/laya-mlx), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev).
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), [laya-mlx](https://github.com/mizorewww/laya-mlx), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev). Re-check the [decision-backend landscape](#alternatives-landscape-decision-backends): [HF comparison](https://huggingface.co/blog/sora-2/jev-ai-vs-djev-vs-laya-vs-openjev-vs-semif-which-d) (23 Sep 2026), [djev](https://github.com/Davipar/djev-dev) preview terms (**verify live**), [OpenJev](https://github.com/razorback16/openjev), and [SemIf](https://github.com/TheoLeeCJ/SemIf-OpenJev). JevBench composites stay a dated decision aid — **not** a token-%.
 

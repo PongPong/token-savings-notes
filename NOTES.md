@@ -225,6 +225,8 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 
 **One-line fit:** Keep frontier models for writing, hard reasoning, and sparse plans; let Jev handle fast classify / route / verify / keep-or-drop-tool-result / **per-tick action Choice** (e.g. [minecraft-agent](https://github.com/rmalde/minecraft-agent) §9; live web [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) §11) (price list ~$0.042/MTok input, output free — verify live; speed/cost multiples are author ceilings). Open-weights alt: [Laya](https://github.com/NandhaKishorM/laya) (same `choice`/`score`/`noul` shape; Apache 2.0 — see TYPESAFE-JEV). On Apple Silicon: [laya-mlx](https://github.com/mizorewww/laya-mlx) (independent MLX port; author latency ms / **0 output tokens** — not a session token-%; [Apple Silicon subsection](./TYPESAFE-JEV.md#apple-silicon-laya-mlx)).
 
+**Decision backends:** Jev, djev, Laya, OpenJev, and SemIf are compared in [Alternatives landscape](./TYPESAFE-JEV.md#alternatives-landscape-decision-backends) (HF blog, 23 Sep 2026). JevBench composite / calibration / latency — **not** a token-%.
+
 
 ## Computer-use token hygiene
 
@@ -517,7 +519,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), and [laya-mlx](https://github.com/mizorewww/laya-mlx). Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-24. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), and [laya-mlx](https://github.com/mizorewww/laya-mlx). Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-25. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
