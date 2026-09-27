@@ -8,7 +8,7 @@ Short companion to `NOTES.md`. Keep the main playbook thin; put detail here.
 
 **API shape:** `POST /v1/systemone` with `model` (e.g. `jev-latest`), `state`, and `questions` (`noul` / `choice` / `score`). Also via Vercel AI Gateway as `typesafe-ai/jev`.
 
-**Landscape:** [Jev vs djev vs Laya vs OpenJev vs SemIf](#alternatives-landscape-decision-backends) — Hugging Face blog, 23 Sep 2026. Operating-model choice. **Not** a token-%.
+**Landscape:** [Jev vs djev vs Laya vs OpenJev vs SemIf](#alternatives-landscape-decision-backends) — Hugging Face blog, 23 Sep 2026. [Nimble](#nimble) sits in that section as a later open recipe (outside the JevBench snapshot). Operating-model choice. **Not** a token-%.
 
 ## Why it matters for token spend
 
@@ -98,7 +98,7 @@ pip install laya-mlx
 
 ## Alternatives landscape (decision backends)
 
-Five **System One** stacks. Each returns a typed decision (`choice` / `score` / `noul`). None writes prose or code.
+Five **System One** stacks from the HF comparison, plus [Nimble](#nimble) (open recipe; outside that JevBench snapshot). Each returns a typed decision (`choice` / `score` / `noul`, or Nimble’s flat enum / boolean / ordered score). None writes prose or code.
 
 **Source:** [Jev ai vs djev vs Laya vs OpenJev vs SemIf: Which Decision Model Should You Use?](https://huggingface.co/blog/sora-2/jev-ai-vs-djev-vs-laya-vs-openjev-vs-semif-which-d) — Hugging Face, **23 Sep 2026**. Blog account: alchemication-pfpt. The article author (sora-2) posted the repo links in the comments. Those links are the ones used below.
 
@@ -148,6 +148,33 @@ What the composite hides (same snapshot; attribute to the HF blog / JevBench):
 
 **Caveats:** Composite is close to Jev (#2, 73.1 vs 74.4). The gap is uneven: SemIf leads the judge tier; Jev leads hard tier (**74.1%** vs **59.5%**) and calibration (**82.7** vs **72.6**). You own the GPU, the serving stack, and calibration.
 
+### Nimble
+
+**Repo:** [bespokelabsai/nimble](https://github.com/bespokelabsai/nimble) (**1,852★ as of 2026-09-27**) · model [bespokelabs/Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B) (also [Bespoke-Nimble-9B-v2](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B-v2); HF model card: Apache 2.0). README tagline: **Data, Model, Recipe for an open Jev**. Outside the JevBench snapshot above.
+
+**What:** Local typed decisions from a flat schema: enum **Choice**, boolean **Noul**, ordered **Score**. The scorer reads candidate **answer-token logits** (no generated JSON, no chain-of-thought). Base is **Qwen3.5-9B + LoRA**. Mac Apple Silicon uses MLX `ParallelScorer` (shared context once). NVIDIA uses BF16 CUDA (each field is scored with the full prompt). Local inference needs no TypeSafe API key. Text only. Inspiration: TypeSafe Jev System One, and the serving method in [Niels Rogge’s note on Jev decoding](https://x.com/NielsRogge/status/2100239244501430438). The README says training uses **hard reference labels** and did not distill from Jev.
+
+**When:** You want a published data, train, and serve recipe on your own machine. README: the 9B weights alone are about **18 GB** before runtime headroom. The project was built in one day; expect rough edges. Measure it on your tasks.
+
+**Contrastive recipe:** Flip one focus fact so the label flips; keep the pair, and its source family, in the same split. Published training set **2,676** / held-out **324**. Labels are synthetic.
+
+**Held-out 324** (author README — synthetic labels, **162** contrastive pairs, **six** source families; a narrow test). Agreement with those reference labels:
+
+| Model | Agreement |
+| --- | --- |
+| Bespoke-Nimble-9B | **90.12%** (292/324) |
+| Jev 1.13.0 | **93.21%** (302/324) |
+| Qwen3.5-9B untuned | **66.36%** (215/324) |
+| Qwen3.8-27B untuned | **84.88%** (275/324) |
+
+**Author latency** (ms per example, one question — timing, **not** a token-%): Nimble on H100 (n=120) median **106 ms**; Nimble on M5 Pro 64GB (n=324) median **444 ms**; Jev API (n=324) median **246.7 ms**.
+
+**Checkpoint:** The 24 Sep 2026 release uses an **8,192**-token context, up to **255** choices, and default **T=1.0** (no separate temperature fit on this checkpoint). Fitted **T=2.179** belongs to original revision `93ec5d6ff1a9cd31d6cc0e0c58d312465d36de7c`; v2 keeps its own transferred default. Leave 2.179 off the latest checkpoint.
+
+**Guides:** [scoring](https://github.com/bespokelabsai/nimble/blob/main/docs/PARALLEL_SCORING.md) · [public benchmarks](https://github.com/bespokelabsai/nimble/blob/main/docs/PUBLIC_BENCHMARKS.md) · [contrastive curation](https://github.com/bespokelabsai/nimble/blob/main/docs/TRAINING_EVAL_CURATION.md) · [Modal serving](https://github.com/bespokelabsai/nimble/blob/main/docs/MODAL_SERVING.md).
+
+**House rule:** Use **Nimble** for the self-hosted open recipe. Use managed **Jev** for a hosted API when you are not running the GPU. Measure your tasks. Leave the agreement percentages and the millisecond figures off the NOTES Savings cheat sheet. They are decision quality and latency, **not** a token-%.
+
 ### Choose by constraint
 
 Start with the constraint that is expensive to change later. Then measure.
@@ -160,8 +187,9 @@ Start with the constraint that is expensive to change later. Then measure.
 | Calibrated probabilities for routing | **Jev** first, then **SemIf**. Measure thresholds on your hard cases. |
 | Fine-tune and open weights | **Laya** first (section above). **OpenJev** and **SemIf** when you will run the runtime. |
 | Jev-compatible request shape | **Jev**, **OpenJev** |
+| Published open recipe, local answer-token scoring (text) | **Nimble** ([subsection](#nimble)) |
 
-**House rule (Pong L / PongPong):** Pick by constraint. Measure thresholds on your hard cases. The composite is a dated decision aid (JevBench v1.3.0, September 2026), not a product guarantee, and **not** a session token-%. Leave these scores off the NOTES Savings cheat sheet.
+**House rule (Pong L / PongPong):** Pick by constraint. Measure thresholds on your hard cases. The composite is a dated decision aid (JevBench v1.3.0, September 2026), not a product guarantee, and **not** a session token-%. Leave these scores off the NOTES Savings cheat sheet. Nimble’s 324-example agreement and author latency stay in [Nimble](#nimble) — decision quality and timing, **not** a token-%.
 
 ## Real-world use cases (agents + products)
 
@@ -363,7 +391,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 | Context prune / `/compact` | Prefer [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (keep/drop tools, verbatim text) over lossy LLM summary when tool exhaust dominates |
 | Metering | Log `usage.input_tokens` from System One responses in the same weekly `ccusage` habit |
 | Open-weights / offline decisions | [Laya](https://github.com/NandhaKishorM/laya) (`choice`/`score`/`noul`, Apache 2.0) as Jev-shaped alternative — fine-tune; route multilingual. On Mac: [laya-mlx](#apple-silicon-laya-mlx) native MLX (inference + conversion; independent port) |
-| Decision-backend chooser | [Alternatives landscape](#alternatives-landscape-decision-backends): Jev, djev, Laya, OpenJev, SemIf. Pick by constraint. Bench scores stay in that section — **not** a token-% |
+| Decision-backend chooser | [Alternatives landscape](#alternatives-landscape-decision-backends): Jev, djev, Laya, OpenJev, SemIf, plus [Nimble](#nimble). Pick by constraint. Bench scores and Nimble agreement/latency stay in that section — **not** a token-% |
 | STE100 / Concise | Orthogonal — Jev returns no narration to trim |
 
 ## Limits (do not ignore)
@@ -374,6 +402,7 @@ Or `npm install fast-jev-compaction` and call `compactMessages(...)` from your o
 - Early access / waitlist; pin versioned model IDs when you tune thresholds.
 - For an **open-weights** path, see [Laya](#open-weights-alternative-laya) — not a managed API; plan for GPU preload and fine-tuning. Apple Silicon inference: [laya-mlx](#apple-silicon-laya-mlx).
 - Hosted and self-hosted peers (**djev**, **OpenJev**, **SemIf**): [Alternatives landscape](#alternatives-landscape-decision-backends). Composites are a dated bench, **not** a token-%.
+- Self-hosted open recipe: [Nimble](#nimble) (text, Qwen3.5-9B LoRA). Author agreement and latency stay in that subsection — **not** a token-%.
 - Author speed/cost multiples are **ceilings** — measure your pipeline.
 
 ## Install pointers (agents)
@@ -391,5 +420,5 @@ Suggested explore prompt (TypeSafe): ask the agent, with the skill loaded, where
 
 ## Weekly refresh
 
-Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), [laya-mlx](https://github.com/mizorewww/laya-mlx), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev). Re-check the [decision-backend landscape](#alternatives-landscape-decision-backends): [HF comparison](https://huggingface.co/blog/sora-2/jev-ai-vs-djev-vs-laya-vs-openjev-vs-semif-which-d) (23 Sep 2026), [djev](https://github.com/Davipar/djev-dev) preview terms (**verify live**), [OpenJev](https://github.com/razorback16/openjev), and [SemIf](https://github.com/TheoLeeCJ/SemIf-OpenJev). JevBench composites stay a dated decision aid — **not** a token-%.
+Re-check pricing, model aliases, LangChain middleware APIs, [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [rmalde/minecraft-agent](https://github.com/rmalde/minecraft-agent), [Laya](https://github.com/NandhaKishorM/laya), [laya-mlx](https://github.com/mizorewww/laya-mlx), [Nimble](https://github.com/bespokelabsai/nimble) ([Bespoke-Nimble-9B](https://huggingface.co/bespokelabs/Bespoke-Nimble-9B)), LiteLLM Jev compaction, and new cookbooks each Monday with the rest of the token-savings notes. Also [CUA-S1 / trycua](https://github.com/trycua/cua) computer-use specialists and [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) (indexed DOM + Jev). Re-check the [decision-backend landscape](#alternatives-landscape-decision-backends): [HF comparison](https://huggingface.co/blog/sora-2/jev-ai-vs-djev-vs-laya-vs-openjev-vs-semif-which-d) (23 Sep 2026), [djev](https://github.com/Davipar/djev-dev) preview terms (**verify live**), [OpenJev](https://github.com/razorback16/openjev), [SemIf](https://github.com/TheoLeeCJ/SemIf-OpenJev), and [Nimble](#nimble). JevBench composites stay a dated decision aid — **not** a token-%. Nimble holdout agreement and author latency stay decision quality and timing — **not** a token-%.
 
