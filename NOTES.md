@@ -230,6 +230,8 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 
 **Decision backends:** Jev, djev, Laya, OpenJev, and SemIf are compared in [Alternatives landscape](./TYPESAFE-JEV.md#alternatives-landscape-decision-backends) (HF blog, 23 Sep 2026). JevBench composite / calibration / latency — **not** a token-%. [Nimble](./TYPESAFE-JEV.md#nimble) ([bespokelabsai/nimble](https://github.com/bespokelabsai/nimble)) is the self-hosted open recipe in that section; author holdout agreement and latency are **not** a token-%.
 
+**Local scoring:** Avi Chawla’s 22 Sep 2026 walkthrough is a SGLang `/v1/score` tutorial in [Local scoring with SGLang](./TYPESAFE-JEV.md#local-scoring-sglang) — mechanism and an author latency demo, **not** a token-%.
+
 
 ## Computer-use token hygiene
 
@@ -523,7 +525,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-28. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-28. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
