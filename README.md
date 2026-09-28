@@ -42,4 +42,4 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 
 Scout rules: creditable X only; not eng-only; include Chinese users; no invented %.
 
-Last edit: 2026-09-25.
+Last edit: 2026-09-28.

@@ -11,7 +11,7 @@ No MCP, no `AGENTS.md`, no `/compact`, no CLI formatters.
 2. **Short always-on instructions** — Project / custom instructions stay thin (P4).
 3. **Pick the cheap model first** — frontier only when the ask is hard (P3).
 4. **Paste less** — failing error slice, not the whole log (P7/P8).
-5. **Ask for short answers** — bullets / STE100 / “no preamble” (P9).
+5. **Ask for short answers** — bullets / STE100 / “no preamble” (P9). Simplify after the hard answer, not as always-on.
 6. **Check usage in the product UI** — don’t retype “how many tokens?” every turn (see NOTES Meter for CLI meters; browser = vendor usage page).
 
 ## How each big idea shows up here
@@ -33,3 +33,5 @@ CLI agents, MCP, `/compact`, formatters, DCP, Agent Teams — see [cli-agents.md
 ## Weekly refresh
 
 New facts go into **NOTES / SOURCES once**. Update this file only if a **browser lever** changes (e.g. a product gains Projects / model router). Never copy a new % into this guide.
+
+Last edit: 2026-09-28.
