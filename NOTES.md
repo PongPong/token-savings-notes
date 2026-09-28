@@ -53,6 +53,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Technique | Rough savings (as reported) | Evidence | Notes |
 | --- | --- | --- | --- |
 | MCP hygiene (disable / consolidate / Tool Search) | Schema cut **~60%** (14k→5.7k); Tool Search **~85%** (134k→5k); idle MCP **4–10k** or **67k+** with many servers; PostHog **113k→5k** single exec; Rulestack **~61k→21k** (~**40k** deferred); Cursor DCD **46.9%** fewer total agent tokens (MCP-calling runs) | Spence **self-measured**; Tool Search **Anthropic internal** via VB; Shuttle / staff / PostHog **self-reported**; Rulestack **self-measured**; Cursor **A/B** | Usually the biggest *easy* win |
+| Cursor harness efficiency (system prompt + dynamic built-ins + cache breakpoints + sparse Read nums) | Aggregate **~7%** lower user token cost; static tool-description tokens **−60%**; cold-cache misses **−20%**; cache-read tokens **−1.6%**; system prompt trimmed **~66%** (harness-internal) | Cursor blog 23 Sep 2026 — **product A/B / production** | Shipped in Cursor — not a user toggle. MCP DCD **46.9%** remains the separate MCP-calling figure already on this sheet. |
 | Lean AGENTS.md / skills on demand | **~2–3k tokens/turn** when skill not loaded | Verma **self-reported** | Always-on tax every turn |
 | `/clear` / new session (unrelated task) | **~30–50%** per-message (community); one case **412k** cleared | Atticus **attributed**; @jcfmunoz **self-reported** | Same task may prefer warm cache |
 | `/compact` ~60% util (not 95%) | No universal %; Shuttle autocompact buffer example 45k→176k free | MindStudio tip; Shuttle **self-reported** | Quality lever more than a fixed % |
@@ -131,6 +132,8 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Concrete tool — [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)** (`tamaratran/fast-jev-compaction`): npm library + Claude Code plugin. Uses **TypeSafe Jev** to score each historical tool call/result (`noul`: keep call? keep result verbatim?). Actions: keep both, keep call + truncate result (`truncateHeadChars`, default 300), or drop call+result. **Never rewrites** user/assistant text — only deletes/truncates tools. Pins first message + newest `preserveRecentMessages` (default 6). Claude Code hook replaces built-in `/compact` summary when reduction is enough; else falls back to summary. Needs `TYPESAFE_API_KEY`; function hooks flag for Claude Code 2.1.274+. Related: LiteLLM’s TypeSafe Jev compaction guardrail (drop stale tool results before the model call).  
 **Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Jev prune is cheap vs a frontier summarize pass and keeps exact paths/errors. Summary is the fallback.  
 **Caveat:** README publishes `reductionRatio` (chars), not a universal token-%. Include Jev’s own cost when measuring. Do not invent a deck %.
+
+**Sandbox / index tool exhaust (context-mode):** Route Bash/Read/WebFetch-scale work through a sandbox that returns summaries or BM25 hits ([mksglu/context-mode](https://github.com/mksglu/context-mode)). Author benches claim ~**98%** *tool-output* cuts — treat like RTK: measure bill impact on your harness; license ELv2.
 
 
 ### 8. Targeted exploration (narrow @files; stop early; shrink shell output) — ★★★☆☆ (3/5)
@@ -333,7 +336,8 @@ Percentages for slides: use the **Savings cheat sheet** only. This section is fo
 3. **Cheap routing vs cache:** Per-turn routers can *increase* spend. Route at cold boundaries or via subagents with handoff.
 4. **Auto-compact:** Some practitioners disable it (noise / lost control). Others compact manually at ~60%. Product auto-compact near 95% is late for quality.
 5. **STE100 vs Concise:** STE100 = short *sentences* / clarity; Concise = less narration. STE100 alone does not guarantee fewer tokens.
-6. **Starving context backfires:** Under-spec prompts cause more exploration and retries (Atticus Li thesis: optimize cost-per-accepted-change, not tokens-per-message).
+6. **STE100 always-on vs thinking quality (S Anand, 1 Aug 2026):** Asking ChatGPT (GPT-5.6 Sol) to “Answer in ASD-STE100” reduced thinking quality across six tasks (fewer sources; red on most eval axes). Prefer: let the model reason, **then** ask for STE100/simple explanation — or keep STE100 for status/orchestration replies only. **No token-%** in that post.
+7. **Starving context backfires:** Under-spec prompts cause more exploration and retries (Atticus Li thesis: optimize cost-per-accepted-change, not tokens-per-message).
 
 ---
 
@@ -519,7 +523,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), and [laya-mlx](https://github.com/mizorewww/laya-mlx). Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-27. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-28. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
