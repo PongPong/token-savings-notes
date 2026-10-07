@@ -11,6 +11,7 @@ Depth lives in core — this file is the door + map, not a second encyclopedia.
 Follow NOTES **Do this week** exactly (MCP off, clear/compact, meter, dense+format-once, route before frontier). That checklist is the single ops list — not repeated here.
 
 - Claude Code: learn `/rewind` vs `/compact` vs `/clear`; tune `/autocompact` if you miss manual compact. See [MAP](./MAP.md) P6.
+- Claude Code on Bedrock/Vertex/Foundry/gateway: 1M is default — opt out via `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` or `/autocompact 200k` (per model). See [MAP](./MAP.md) P6.
 
 ## How to use the map
 
@@ -28,4 +29,4 @@ CLI column of [MAP.md](./MAP.md) = the action. NOTES = the why and the attribute
 
 Add scout deltas to **SOURCES** and pattern/cheat-sheet changes to **NOTES** once. Touch this guide only for new **CLI levers** (new slash command, mode name). Ban twin copies of quotes/%.
 
-Last edit: 2026-09-28.
+Last edit: 2026-10-05.
