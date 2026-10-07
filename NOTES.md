@@ -64,7 +64,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Astra plan/review + Sol impl (3–5 Codex threads) | **No token-%** (author: concurrency, not a benchmark) | @BradGroux **author practice** | Workflow and less role-switching. Fan-out may raise total tokens. [Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux) |
 | Haiku/cheap Explore leaf (vs inherit Opus) | **~37%** fewer metered tokens (one pair) | Systima **measured** n=1 | Pin leaf model |
 | Cheap plan → clear → strong implement | No single %; Terra-style **−49% cost** / **+6% tokens** | Shuttle; bisonbear2 **measured** | Price ≠ fewer tokens |
-| Prompt-cache hygiene | Cache reads ~**10%** of input price; mid-session model switch can **raise** cost | Anthropic | Protect prefix |
+| Prompt-cache hygiene | Cache reads ~**10%** of input price (Anthropic); mid-session model switch can **raise** cost; OpenAI up to **90%** off cached input (**vendor**); customer-reported GitHub **>50%** less fresh processing / Manus **85%→90%+** hit / unnamed **~20%** cost | Anthropic; OpenAI 22 Sep 2026 (**vendor** + **customer-reported**) | Protect prefix; OpenAI 30-min window; changing reasoning effort no longer breaks cache |
 | Parent + Explore (summary only) | No %; parent context win | Official docs | Total tokens may still rise |
 | Dense edit + format-once CLI | No public % | House rule | Stops format loops |
 | RTK (shell compress) | Vendor **60–90%** of *command output*; bill often **~0 / +5%** | Vendor vs JetBrains/Quesma/bisonbear2 **disputed** | Don’t cite 60–90% as bill |
@@ -73,6 +73,8 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Jev Ultrafast (indexed DOM + Jev) | Author eval **n=3 pairs** (same Mercury helper): median **9.450 s → 7.092 s** (~**25%** lower **runtime**); TypeSafe reqs **22 → 17**; browser protocol **1,092 → 101**. Demo **7.073 s**. **No TypeSafe billed $ / no universal session token-%** | [jev-ultrafast `docs/performance.md`](https://github.com/browser-use/jev-ultrafast/blob/main/docs/performance.md) **author / small-n** (sign-test p=0.25) | Runtime & request counts — **not** a token-% |
 | tgrep vs rg | Up to **~52×** faster (latency) | microsoft/tgrep benches | Token win is indirect |
 | Agent Teams / heavy subagent fan-out | **~7× more** tokens; small fan-out **2.6×–5.9× more** | Anthropic **official**; Systima **measured** | Savings = *avoid* this |
+| Fresh session + transcript recall (funes) vs keep / handoff / compact | **3–8×** fewer weighted tokens than keep-context; compact **5–8×** recall cost; handoff ≈ keep (n=3 tasks) | Corvoysier HF **self-measured** | Trap-knowledge tasks; author’s funes tool; one model (claude-opus-4-8) |
+| Effort tier (max vs xhigh) | Sonnet 5.5 max **68** / **$14.19**; Sonnet 5.5 xhigh **63** / **$3.33**; GPT-6.1 Sol xhigh **63** / **$1.04**; Sol medium **61** / **$0.70** (per task) | Artificial Analysis Coding Agent Index ~2 Oct 2026 — **third-party measured** (API list price) | Raw $/task + points — no derived % |
 | Stacked levers (MCP + clear + terse + …) | Combined “**~80%**” / $74→$11 weekends | Hasan **self-reported** | Not transferable as a guarantee |
 
 **Footer:** Isolation ≠ cheaper system-wide. Measure with a status line + `ccusage` (or your dashboard). Use `/context` only for a one-shot peek.
@@ -84,6 +86,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 5/5):** Largest easy win: schema cuts ~60% (Spence), Tool Search ~85% internal, idle MCP tens of k, Cursor DCD **46.9%** on MCP-calling runs (product A/B).
 **What people do:** Disable unused MCP servers. Consolidate tools (params > many near-duplicate tools). Trim descriptions. Use Tool Search / `defer_loading` so schemas load on demand. Exception: one **high-signal** exploration MCP (e.g. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) or [Graphify](https://github.com/Graphify-Labs/graphify) — see Targeted exploration) can beat many low-signal file tools — still disable everything else you are not using this session.
 **Claude Code `ENABLE_TOOL_SEARCH`:** Leave Tool Search on for first-party hosts (unset or `true`). `auto` / `auto:N` thresholds against **context-window size**, not “keep my prompt small.” On 1M ctx, 5% = 50k, so ~40k defs load upfront and undo the deferral (Rulestack **self-measured**, v2.1.263, 2026-09-09: unset **20,819** vs `false` **60,989** vs `auto:5` **62,319**; ~**40,170** deferred / 88 defs). Claude Code may disable Tool Search on non-first-party `ANTHROPIC_BASE_URL` / older models.
+**Claude Code `alwaysLoad: false`:** Per MCP server, defers all of that server’s tools behind tool search (changelog 2.1.287). Pair with Tool Search / MCP hygiene.
 **Cursor Dynamic Context Discovery** ([product blog](https://cursor.com/blog/dynamic-context-discovery), Jediah Katz, 6 Jan 2026): sync MCP tool descriptions to folders; agent gets names then looks up schemas. A/B on runs that called an MCP tool: **46.9%** fewer total agent tokens (statistically significant; high variance by MCP count). Same post: long tool outputs → files; chat history as files for summarization recovery; Agent Skills; terminal sessions as files.
 **Why it saves:** Tool defs load before you type. Multi-server setups commonly eat tens of thousands of tokens at session start.
 
@@ -100,6 +103,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **What people do:** Haiku / Luna / Gemini for search, plans, scaffolding. Opus / Astra / Sonnet for hard coding and irreversible work. Route at session or cold boundaries — not every turn.  
 **Codex variant (Brad Groux):** Pin Astra (up to Extra High) to plan, review, and coordination. Hand scoped implementation to GPT-5.6 Sol (generally Medium), in 3–5 independent threads. **No token-%.** Full case: [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). Fan-out can still raise total tokens.  
 **Why it saves:** Frontier rates on grep/rename/test-scaffold waste money.  
+**Effort tier (Artificial Analysis Coding Agent Index, ~2 Oct 2026):** Effort and harness move cost per task a lot; max is a premium. Third-party measured (API list price): Sonnet 5.5 max **68** / **$14.19**; Sonnet 5.5 xhigh **63** / **$3.33**; GPT-6.1 Sol xhigh **63** / **$1.04**; Sol medium **61** / **$0.70**. No derived %. Via [vibecoding.tech mirror](https://vibecoding.tech/news/2026/10/02/codex-claude-coding-agent-cost) (X blocked); methodology [artificialanalysis.ai/agents/coding-agents](https://artificialanalysis.ai/agents/coding-agents).
 **Catalog:** Routers in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) (e.g. RouteLLM) — verify cost claims upstream.
 **Caveat:** Mid-session model switches bust prompt cache; uncached cheap can beat cached frontier only if measured.
 
@@ -115,6 +119,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Impact (why 4/5):** Cache reads ~10% of input price; one bust forces full-price re-read.
 **What people do:** Static system + tools first. Dynamic stuff in messages. Don’t shuffle tools or swap models mid-session. Cache-safe compaction forks.  
 **Why it saves:** Cache reads ~10% of input price. One prefix byte change can force full-price re-read of the whole history.
+**OpenAI (GPT-6+, 22 Sep 2026):** Up to **90%** off cached input tokens (**vendor**); eligible shared prefixes reused within a **30-minute** window; changing reasoning effort no longer breaks cache. Use an explicit breakpoint after the stable prefix (`prompt_cache_breakpoint` / `prompt_cache_options.mode: explicit`); change effort via an appended update. Check misses with [cache diagnostics](https://developers.openai.com/api/docs/guides/prompt-caching/diagnostics) (`tools_changed`, `input_changed`, …). Customer-reported: GitHub **>50%** less fresh prompt processing; Manus hit rate **85%→90%+**; unnamed **~20%** cost cut — not a universal bill %. [Announcement](https://openai.com/index/better-prompt-caching-for-gpt-6).
 **Catalog:** semantic query cache (e.g. GPTCache) under Cache in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) — separate from Anthropic prompt-cache prefix hygiene; vendor 10× claim is **self-reported**.
 
 
@@ -123,6 +128,8 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **What people do:** Summarize history on purpose. Keep decisions, active errors, files in scope, constraints. Drop resolved logs and dead tangents.  
 **Why it saves:** Full history is resent every turn. A shorter summary cuts the recurring re-read tax.  
 **Practice tip:** Compact ~60% utilization (not at 95%). Auto-compact near the ceiling often summarizes already-degraded context.  
+**Claude Code 1M default (2.1.287+):** On Bedrock / Vertex / Foundry / Claude apps gateway, Opus 4.7+ and Fable use **1M** context by default (no `[1m]` suffix). Opt out: `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` (keeps 200K) or `/autocompact 200k`. From 2.1.288, `/autocompact` window is saved **per model**. 宝玉 (@dotey, ~10 Sep, via mirror) recommends disabling 1M especially with Fable 5.1 — **self-reported, no %**.
+**Caveat (Corvoysier HF, 1 Oct 2026):** On trap-knowledge tasks, compaction can cost **5–8×** more weighted tokens than transcript recall, and may drop the numbers you need. Prefer fresh session + recall tool when measured better than keep/handoff/compact (cheat sheet).
 **Prefer prune-before-summary when you can:** LLM summaries are lossy (paths, errors, constraints vanish). For tool-heavy sessions, prefer Pattern 7 / [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) (Jev keep/drop of tool calls — verbatim text) over a summary-only `/compact`. See [TYPESAFE-JEV.md](./TYPESAFE-JEV.md#use-case-verbatim-context-compaction-fast-jev-compaction).
 
 
@@ -133,6 +140,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **Why it saves:** Most bloat is machine output, not user intent. Mechanical prune is free (no extra LLM call). Jev prune is cheap vs a frontier summarize pass and keeps exact paths/errors. Summary is the fallback.  
 **Caveat:** README publishes `reductionRatio` (chars), not a universal token-%. Include Jev’s own cost when measuring. Do not invent a deck %.
 
+**Research pointer — FOCUS** ([arXiv 2609.37590](https://arxiv.org/abs/2609.37590), 29 Sep 2026): training-free decision-preserving context compression; authors report up to **48%** less peak context (and 73% dependency) with up to +8.9 pp task success — **research self-reported**; peak context ≠ bill; no shipped CLI tool. Not on the cheat sheet.
 **Sandbox / index tool exhaust (context-mode):** Route Bash/Read/WebFetch-scale work through a sandbox that returns summaries or BM25 hits ([mksglu/context-mode](https://github.com/mksglu/context-mode)). Author benches claim ~**98%** *tool-output* cuts — treat like RTK: measure bill impact on your harness; license ELv2.
 
 
@@ -209,6 +217,7 @@ Agents already log turns. These tools read those files:
 - **Stet** — Replay real repo tasks and compare bills across setup changes ([stet.sh write-up](https://www.stet.sh/blog/gpt-56-token-saving-modes)).
 - **Systima** — Metered studies (e.g. subagent tax).
 
+**Claude Code receipt caveat (Corvoysier):** the `usage` field on the result event can undercount a turn badly (author: **14×–442×** on some receipts). Prefer `modelUsage` when metering from session JSON.
 ### Simple weekly habit
 
 1. Keep a **status line** on while coding.
@@ -525,7 +534,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-09-28. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures; OpenAI cache customer figures stay labeled **customer-reported**; Corvoysier recall row stays **self-measured** n=3; AA effort $/task stays raw **third-party** with no derived %; FOCUS peak-context stays off this sheet). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-10-05. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
