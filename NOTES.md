@@ -251,6 +251,8 @@ Jev is a **decision** model (not a chat/coding LLM): state + typed questions →
 
 **Local scoring:** Avi Chawla’s 22 Sep 2026 walkthrough is a SGLang `/v1/score` tutorial in [Local scoring with SGLang](./TYPESAFE-JEV.md#local-scoring-sglang) — mechanism and an author latency demo, **not** a token-%.
 
+**StartLux-Decision:** Open 0.8B–27B decision models with a `/v1/systemone`-compatible server sit in [StartLux-Decision](./TYPESAFE-JEV.md#startlux-decision) — weights CC BY-NC 4.0; author eval, **not** a token-%.
+
 
 ## Computer-use token hygiene
 
@@ -283,6 +285,8 @@ When to use one agent vs multi-agent (and which combo). Full cases and sources:
 | Unsure | **One agent first; add workers only when clutter or parallelism is real** | Default away from tax |
 
 **Astra plans + Sol implements (Brad Groux):** In Codex, Astra (up to Extra High) reads docs, code, and open issues, then assigns 3–5 independent tasks to GPT-5.6 Sol (generally Medium). Astra reviews, merges when authorized, updates the preview, and starts the next ready work. Author: faster because independent work moves at once; **no controlled benchmark**. House fit: frontier model for plan, review, and coordination; Sol (Medium) for scoped implementation — same family as cheap orch and [MODE-MATRIX](./MODE-MATRIX.md). The article states no price. Parallel threads can raise total tokens (Agent Teams). Full write-up: [ORCH-CASES Case 12](./ORCH-CASES.md#case-12-astra-plans-sol-implements-brad-groux). Source row: [SOURCES](./SOURCES.md).
+
+**Sol orchestrates, Astra reviews only (Md Ismail Sojal):** Sol runs the tree, Luna explores, and Astra runs only for an independent review — [ORCH-CASES Case 13](./ORCH-CASES.md#case-13-sol-orchestrates-astra-review-only); “1/5th the cost” is an author cost claim, **not** a token-%.
 
 ---
 
@@ -545,7 +549,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures; OpenAI cache customer figures stay labeled **customer-reported**; Corvoysier recall row stays **self-measured** n=3; AA effort $/task stays raw **third-party** with no derived %; FOCUS peak-context stays off this sheet; Haiku 5.5 average/list cuts and the Sonnet 5.5 cache-read note stay **vendor**; Command+K and Agent Planners stay **self-measured**; UT Austin latency and the in-paper Copilot cite stay off this sheet). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-10-12. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures; OpenAI cache customer figures stay labeled **customer-reported**; Corvoysier recall row stays **self-measured** n=3; AA effort $/task stays raw **third-party** with no derived %; FOCUS peak-context stays off this sheet; Haiku 5.5 average/list cuts and the Sonnet 5.5 cache-read note stay **vendor**; Command+K and Agent Planners stay **self-measured**; UT Austin latency and the in-paper Copilot cite stay off this sheet; StartLux-Decision author eval stays off this sheet; the Sojal “1/5th the cost” stays an author cost claim). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-10-17. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
