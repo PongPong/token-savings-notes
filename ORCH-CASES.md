@@ -148,6 +148,26 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 
 ---
 
+<a id="case-13-sol-orchestrates-astra-review-only"></a>
+
+### Case 13 — Sol orchestrates, Luna explores, Astra reviews only (Md Ismail Sojal)
+
+- **Verdict:** Sol orchestrates and implements; Luna does narrow exploration; Astra runs only for an independent review
+- **Combination:** GPT-6.1 Sol orchestrates. GPT-6 Luna (Medium/High) does narrow work. GPT-6.1 Sol High implements. GPT-6 Astra (Low/Medium) reviews only when needed.
+- **Post (author, quoted exactly):** “a cost-effective GPT-6 Luna + GPT-6.1 Sol medium agent tree, orchestrated by GPT‑6.1 Sol at low effort. 6.1 Sol replaces Astra at 1/5th the cost. give your Luna the narrow work, and call Astra only when an independent review is needed. Use Terminal Bench's pass rates and cache costs as a starting signal, then tune the effort levels to your own work.”
+- **Tree (comment transcription of the post image, by Tump Hub — not the author’s text):**
+  1. GPT-6.1 Sol Medium — ROOT / ORCHESTRATOR.
+  2. Luna Medium/High — repo exploration; locate files.
+  3. Sol High — implementation, debugging, tests; docs, dependency, and focused research; integrate, run tests, and verify.
+  4. GPT-6 Astra Low/Medium — ONLY WHEN architecture, security, difficult regression, or major release.
+- **Contrast with Case 12:** In Case 12, Astra plans, coordinates, and reviews, and Sol implements. Here, Sol orchestrates, and Astra is review-only. The frontier model leaves the main loop.
+- **Note:** The post text says the orchestrator runs at **low** effort. The image transcription says **Medium**. The pack does not resolve this. Tune effort on your own work, as the post says.
+- **Token fit (house):** Same family as Case 2 (cheap orch + strong leaf) and Case 9 (cheap explore). Sends narrow search to the cheapest tier. Calls the frontier model only for review. The post names Terminal Bench pass rates and cache costs as a starting signal. It gives no Terminal Bench numbers. This pack records none. Fan-out can still raise total tokens (Cases 3–4).
+- **Source:** Md Ismail Sojal, Facebook post, 3 Oct 2026 — https://www.facebook.com/share/18TGJAHNkf/ . Row in [SOURCES.md](./SOURCES.md).
+- **Savings:** **author cost claim** — “1/5th the cost” (Sol vs Astra). Not measured here. **Not a token-%.**
+
+---
+
 ### STE100 bullets (deck)
 
 - One agent wins for sequential, dependent, or tiny work.
@@ -158,6 +178,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 - Lived caution: one agent per finding paid ~47k startup each; most tokens were boot (issue #77834).
 - Cheap orch + strong leaf can save *premium* quota (@anshuc; self-reported 40–70%).
 - Astra can plan and review while Sol implements 3–5 independent scopes (Brad Groux). That claim is concurrency. No token-%.
+- Sol can orchestrate. Luna explores. Call Astra only for an independent review (Md Ismail Sojal). “1/5th the cost” is an author cost claim. No token-%.
 - Pin Explore / workers to Haiku. Do not inherit Opus for search.
 - Do not switch models mid-session to “save.” Use a Haiku subagent or a cold boundary.
 - Parent must receive summaries only (NOTES P.7). Never paste full worker logs up.
@@ -178,6 +199,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 | Plan then implement across models | **Cheap plan session → clear → strong implement** | Cold boundary; Shuttle pattern |
 | Safety / write blast radius | **Read-only planner + scoped executor** | Isolation for risk, not thrift |
 | Existing backlog; independent slices; one frontier chat does every role | **Astra plan/review + Sol leaves** (Brad Groux, Case 12) | Concurrency and less role-switching. Serialize shared interfaces. No measured token cut. |
+| Frontier cost too high for the main loop; review still needed sometimes | **Sol orch + Luna explore + Sol High impl; Astra review-only** (Md Ismail Sojal, Case 13) | Frontier model leaves the loop. Author cost claim only. Tune effort on your work. |
 | Unsure | **One agent first; add workers only when clutter or parallelism is real** | Default away from tax |
 
 ---
@@ -198,6 +220,7 @@ Paste-ready for these NOTES (Pong L). STE100-style. Every figure attributed. No 
 | Gemini plan → Claude implement | practitioner blog | https://www.shuttle.dev/blog/2025/10/16/claude-code-best-practices |
 | Router vs cache lock | practitioner | https://dev.to/frankchu/i-built-a-router-to-cut-my-claude-code-bill-and-prompt-caching-was-the-whole-problem-3ifl |
 | Astra plans; 3–5 Sol threads implement; no benchmark | author practice (X article) | https://x.com/BradGroux/status/2102455199583334625 |
+| Sol orch; Luna explore; Astra review-only; “1/5th the cost” | author cost claim (Facebook post; tree = comment transcription) | https://www.facebook.com/share/18TGJAHNkf/ |
 | 省token / Haiku explore / 产出多复用少 | CN practitioner + docs | https://juejin.cn/post/7644429323654529024 |
 
 **Conflicts already in NOTES §4:** Subagents save *parent* context but can raise *total* tokens; cheap per-turn routers can raise spend vs cold-boundary handoff.
