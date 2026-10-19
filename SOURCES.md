@@ -76,6 +76,9 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | Asana engineering — browser agent cache study | https://asana.com/inside-asana/cut-browsers-agent-cost · https://openai.com/index/asana-browser-agent | “Keep the history append-only; when pruning is necessary, prune in large batches.” | **company-measured** — cheat sheet |
 | Antoine van der Lee (SwiftLee) — reduce token usage | https://www.avanderlee.com/ai-development/reduce-token-usage-claude-code-codex-cursor/ | **28 Sep 2026.** “You can reduce token usage in Claude Code, Codex, and Cursor by guarding what your agent reads, not what it writes.” Pointer: [@twannl](https://x.com/twannl/status/2111872585075974543). | author audit — no bill % |
 | Vercel AI Gateway — session affinity | https://vercel.com/changelog/ai-gateway-logs-now-show-session-affinity | **18 Oct 2026.** “Session affinity sends each turn to the provider that served the one before it, so the provider already has most of the prompt in cache.” Pointer: [@vercel_dev](https://x.com/vercel_dev/status/2111865122813784173), [@russano](https://x.com/russano/status/2111605981075411125). | vendor — no % |
+| Vercel Labs agent-browser — snapshot deltas | https://github.com/vercel-labs/agent-browser · [v0.38.0 release](https://github.com/vercel-labs/agent-browser/releases/tag/v0.38.0) · https://x.com/ctatedev/status/2111930462176432333 | Release (16 Sep 2026): “Added **automatic snapshot deltas** with `snapshot --delta`, which returns a full baseline followed by an unchanged revision or compact structural changes.” Chris Tate (@ctatedev, maintainer), 18 Oct 2026 22:20 Europe/London: “Returns only what changed since the last snapshot, instead of the whole page. Below: 73x fewer tokens filling a form”. Follow-up: “--delta resets between sessions” ([reply](https://x.com/ctatedev/status/2111936569741332839)). | **author demo** (one form) — not a token-% |
+| ClawCodex (agentforce314) — byte-stable prefix + `/eco` | https://github.com/agentforce314/clawcodex · https://clawcodex.app/faq.html | README: “ClawCodex keeps your request prefix **byte-stable**, so DeepSeek's prompt cache covers your whole `system + tools + history` span across turns.” `/eco`: “27 real command outputs replayed through the production pipeline — **92,989 → 17,767 tokens (-80%)**.” `--nano`: “a **~2K-token** fixed payload (vs ~17K default)”. MIT. | **self-measured** (command output only) — not a bill % |
+| OpenViking (Volcengine) — L0/L1/L2 context layers | https://github.com/volcengine/OpenViking · [benchmark report](https://blog.openviking.ai/post/openviking-benchmark-results/) · CN pointer https://x.com/Huahuazo/status/2112161843909128627 | README: “Generated directory abstracts (L0) and overviews (L1) let agents judge relevance before opening full content (L2).” Benchmark (v0.3.22, LoCoMo): “input tokens drop by 34.3–91.0% and query latency by 58.45–66.10%.” AGPL-3.0. Pointer @Huahuazo (LanfAI, 19 Oct 2026). | **vendor-measured** — not on cheat sheet |
 
 ---
 
@@ -285,6 +288,18 @@ Window ~17 Oct → 19 Oct 2026. X MCP worked (EN + CN). Four adds, all checked a
 - SwiftLee ([article](https://www.avanderlee.com/ai-development/reduce-token-usage-claude-code-codex-cursor/), 28 Sep; surfaced by @twannl 18 Oct). **Author audit.** NOTES P4 / P8; 10 rules in [EXAMPLE-PROMPTS](./EXAMPLE-PROMPTS.md#swiftlee-global-agent-rules-10-lines).
 - Vercel AI Gateway session affinity ([changelog](https://vercel.com/changelog/ai-gateway-logs-now-show-session-affinity)). **Vendor, no %.** NOTES P5 + Meter.
 - Skipped: Headroom “up to 95%” reposts (promo; same skip as the weekly pass). AgentOpt “42% fewer tokens” (new account, no method). leanrea/REA promo posts. DeepSeek V4.1 Flash price anecdotes (not a lever). CN “55% vs 58% token use by sector” posts (no source). @eze_is_1 near-zero-token scraping (method not posted yet; re-check). @liuxu_qingdao daily token-report routine (tiny account; idea already in NOTES Meter weekly habit).
+
+---
+
+## Web/X primary (19 Oct 2026, weekday scout PM)
+
+Window ~19 Oct 09:00 → 18:00 Europe/London. X MCP worked (EN + CN). Three adds, all checked against primary sources.
+
+- agent-browser `snapshot --delta` / `screenshot --if-changed` ([repo](https://github.com/vercel-labs/agent-browser); surfaced by maintainer [@ctatedev](https://x.com/ctatedev/status/2111930462176432333) 18 Oct). **Author demo.** NOTES Computer-use; MAP P-CU.
+- ClawCodex byte-stable prefix and `/eco` ([repo](https://github.com/agentforce314/clawcodex)). **Self-measured**, command output only. NOTES P5 / P8; MAP P5.
+- OpenViking L0/L1/L2 layers ([repo](https://github.com/volcengine/OpenViking); CN pointer [@Huahuazo](https://x.com/Huahuazo/status/2112161843909128627)). **Vendor-measured.** NOTES P8; MAP P8.
+- Skipped: @alextalksai “230x cheaper” ClawCodex post (promo; primary repo cited instead). DeepSeek V4.1 Flash-1017 “>50% fewer tokens” CN reposts (no primary; same skip as AM). “/autocompact 512k” tip (no method). CN “55% of tokens go to short drama” posts (usage share, not a saving).
+- No new cheat-sheet rows.
 
 ---
 
