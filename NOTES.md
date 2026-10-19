@@ -26,6 +26,7 @@
 - [Context engineering (PRP workflow)](#context-engineering-prp-workflow)
 - [Example prompts (real-world)](#example-prompts-real-world)
 - [Measured study: five “token saving” modes (u/bisonbear2, 2026)](#measured-study-five-token-saving-modes-ubisonbear2-2026)
+- [Measured study: 12 Claude Code tips, 945 runs (Kensei, 2026)](#measured-study-12-claude-code-tips-945-runs-kensei-2026)
 - [Library catalog: llm-engineer-toolkit](#library-catalog-llm-engineer-toolkit)
 - [Generative UI token hygiene (json-render)](#generative-ui-token-hygiene-json-render)
 - [Sources](#sources)
@@ -57,6 +58,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Lean AGENTS.md / skills on demand | **~2–3k tokens/turn** when skill not loaded | Verma **self-reported** | Always-on tax every turn |
 | `/clear` / new session (unrelated task) | **~30–50%** per-message (community); one case **412k** cleared | Atticus **attributed**; @jcfmunoz **self-reported** | Same task may prefer warm cache |
 | `/compact` ~60% util (not 95%) | No universal %; Shuttle autocompact buffer example 45k→176k free | MindStudio tip; Shuttle **self-reported** | Quality lever more than a fixed % |
+| Kensei 945-run Claude Code tips (Sonnet 5.5, code-reading questions) | `/clear` before unrelated work: next 3 questions **−47% / −76% / −79%** after 5 / 15 / 30 turns; `/compact` **−39% / −58% / −60%** (compact call counted); 16 KB rules in a skill vs in CLAUDE.md **−31%** per question; Opus 5.5 effort low vs medium **−17%**; Sonnet 5.5 high vs medium **+20%**; subagent, MCP off, caveman: **no clear effect** | Kensei **self-measured**, n=945, 95% CI, [public logs](https://github.com/kenseii1/claude-code-limits-tests) | One Python repo; lookups, not writing code; tokens, not plan meter. [Study](#measured-study-12-claude-code-tips-945-runs-kensei-2026) |
 | Context prune before LLM summary (DCP etc.) | No universal %; cache-hit notes ~85% vs ~90% | DCP docs ecosystem | Free mechanical prune first |
 | fast-jev-compaction (Jev keep/drop tools) | No universal token-% in README; reports **char** `reductionRatio`; fallback to LLM summary if too little cut | [tamaratran/fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction) README; LiteLLM TypeSafe compaction blog | Verbatim prune — not a summary; measure incl. Jev cost |
 | STE100 / Concise / terse output | **No STE100 %**; terse output **30–50%** of *output*; Concise article **40–60%** output | Hasan / @ellen_in_sf **self-reported**; STE100 gists **no figure** | Cuts narration, not whole bill |
@@ -66,6 +68,7 @@ Rough = as reported elsewhere. Say “practitioners report…” on stage. Do **
 | Haiku 5.5 short-prompt tier (API billing) | Stay ≤100K with `/autocompact 100k` (per-model, incl. Haiku subagents). Prices $0.10/$0.50 vs $0.50/$2.50 over 100K. Anthropic **~75%** avg vs Haiku 4.5 / **90%** list ≤100K — **vendor** | Anthropic launch + pricing + CHANGELOG 2.1.293; tip @lydiahallie (**staff**) | Not a universal bill %; prompt length counts cache reads and writes |
 | Cheap plan → clear → strong implement | No single %; Terra-style **−49% cost** / **+6% tokens** | Shuttle; bisonbear2 **measured** | Price ≠ fewer tokens |
 | Prompt-cache hygiene | Cache reads ~**10%** of input price (Anthropic); mid-session model switch can **raise** cost; OpenAI up to **90%** off cached input (**vendor**); customer-reported GitHub **>50%** less fresh processing / Manus **85%→90%+** hit / unnamed **~20%** cost; Sonnet 5.5 cache reads **$0.10**/M (was $0.20) → ~**20%** cheaper most agentic (**vendor**, 7 Oct) | Anthropic; OpenAI 22 Sep 2026 (**vendor** + **customer-reported**); Anthropic 7 Oct 2026 **vendor** | Protect prefix; OpenAI 30-min window; changing reasoning effort no longer breaks cache. Sonnet cache-read cut is **vendor**, not a universal bill % |
+| Append-only history + batch pruning (Asana browser agent) | Same model (Model B): **29×** lower cost per run, **4×** faster vs original production setup; on GPT-6.1 Sol: **76×** lower, **5×** faster, **89%** of input from cache, $0.47/run | Asana engineering + OpenAI story — **company-measured** (144 runs + 12-run follow-up; 3 runs per condition) | The 76× also includes a model change. Caching history *without* batch pruning cost more on 3 of 4 models. [Pattern 5](#top-patterns-by-savings-impact) |
 | Parent + Explore (summary only) | No %; parent context win | Official docs | Total tokens may still rise |
 | Dense edit + format-once CLI | No public % | House rule | Stops format loops |
 | RTK (shell compress) | Vendor **60–90%** of *command output*; bill often **~0 / +5%** | Vendor vs JetBrains/Quesma/bisonbear2 **disputed** | Don’t cite 60–90% as bill |
@@ -101,6 +104,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **What people do:** New chat when the task changes. Keep related phases in one session. Put durable rules in CLAUDE.md / AGENTS.md.  
 **Why it saves:** Stale history rides every turn. Clearing stops paying rent on dead context.  
 **Caveat:** Within one task, a warm cache can make one long session cheaper than many cold restarts (see caching).
+**Measured:** In the [Kensei 945-run study](#measured-study-12-claude-code-tips-945-runs-kensei-2026), `/clear` before unrelated work was the biggest cut. `/compact` was next when the next task builds on the last. Figures on the cheat sheet.
 
 
 ### 3. Cheap-model routing (small for triage / explore; big for hard steps) — ★★★★☆ (4/5)
@@ -119,6 +123,8 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **What people do:** Keep always-on rules thin (phonebook, not manual). Move domain packs into skills that load when triggered.  
 **Why it saves:** Always-on files tax *every* turn (even with cache, still a recurring cost). On-demand skills avoid that baseline.
 **Related:** Feature-specific context belongs in a **PRP / INITIAL.md**, not in always-on CLAUDE.md — see **Context engineering (PRP workflow)**.
+**Measured:** The [Kensei study](#measured-study-12-claude-code-tips-945-runs-kensei-2026) moved 16 KB of unneeded rules from CLAUDE.md into a skill with a one-line pointer. Figure on the cheat sheet.
+**Split, don’t delete ([SwiftLee](https://www.avanderlee.com/ai-development/reduce-token-usage-claude-code-codex-cursor/), Antoine van der Lee, 28 Sep 2026):** Move scoped knowledge into sub-folder `AGENTS.md` files or docs the agent opens only when needed. Author: RocketTrace root `AGENTS.md` 8,677 → 1,454 bytes. He also saw a Codex log where a project `AGENTS.md` passed its 32 KB budget and the rest was truncated without notice. Keep one skill per framework; duplicate skills load twice.
 
 
 ### 5. Prompt-caching hygiene (stable prefix; don’t break it) — ★★★★☆ (4/5)
@@ -129,6 +135,8 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 **OpenAI (GPT-6+, 22 Sep 2026):** Up to **90%** off cached input tokens (**vendor**); eligible shared prefixes reused within a **30-minute** window; changing reasoning effort no longer breaks cache. Use an explicit breakpoint after the stable prefix (`prompt_cache_breakpoint` / `prompt_cache_options.mode: explicit`); change effort via an appended update. Check misses with [cache diagnostics](https://developers.openai.com/api/docs/guides/prompt-caching/diagnostics) (`tools_changed`, `input_changed`, …). Customer-reported: GitHub **>50%** less fresh prompt processing; Manus hit rate **85%→90%+**; unnamed **~20%** cost cut — not a universal bill %. [Announcement](https://openai.com/index/better-prompt-caching-for-gpt-6).
 **Codex vendor-side cache reuse (Tibo, OpenAI, 16 Oct 2026):** OpenAI says Codex & Work now reuse context across subagents, keep context cached longer, and route requests to increase cache hits. This is server-side, not a user setting. **No %.** Keep subagent and session prefixes stable so the cache can hit. [Post](https://x.com/thsottiaux/status/2111244596131111253).
 **Claude Code 1h cache and idle sessions:** Idle compaction (Pattern 6) runs before the one-hour prompt cache expires.
+**Append-only history, batch pruning ([Asana](https://asana.com/inside-asana/cut-browsers-agent-cost), Oct 2026):** Asana’s browser agent cached its tools and system prompt, but not its growing history. It also removed the last screenshot at every step, so the cached prefix broke on almost every call. Fix: put a cache marker on the latest tool result. Keep history append-only. Prune screenshots in batches (keep up to 20, then cut to 1). Raise the history budget so old text is not trimmed. Caching history without batch pruning cost more on 3 of 4 models. Keep caps on steps, tokens and cost per run. Figures on the cheat sheet (**company-measured**). [OpenAI story](https://openai.com/index/asana-browser-agent) · pointer [@daniel_mac8](https://x.com/daniel_mac8/status/2109079519252361651).
+**Gateway session affinity ([Vercel AI Gateway](https://vercel.com/changelog/ai-gateway-logs-now-show-session-affinity), 18 Oct 2026):** A gateway can send turn 2 to a different provider than turn 1. That provider has no cache for your prompt. Vercel now keeps each turn on the provider that served the last one (default for text and chat). Send the same `x-session-id` header, or `providerOptions.gateway.sessionId`, on every request in a conversation. Without one, it groups by a fingerprint of the conversation’s opening. On other gateways, pin a conversation to one provider. **Vendor — no %.** Pointer [@russano](https://x.com/russano/status/2111605981075411125).
 **Catalog:** semantic query cache (e.g. GPTCache) under Cache in [llm-engineer-toolkit](https://github.com/KalyanKS-NLP/llm-engineer-toolkit) — separate from Anthropic prompt-cache prefix hygiene; vendor 10× claim is **self-reported**.
 
 
@@ -166,6 +174,7 @@ Sorted by **rough savings impact** (high → low). Stars = impact estimate from 
 - **[tgrep](https://github.com/microsoft/tgrep)** — trigram-indexed grep (client/server) as a **ripgrep/grep replacement** on large trees. Index once (`tgrep serve .`); agents should prefer `tgrep` for repo search when the index is warm (see repo `AGENTS.md`). Speed win on huge monorepos; token win is indirect (faster, tighter search → fewer thrash reads).
 - **[codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)** — MCP that builds a local code knowledge graph (tree-sitter + optional Hybrid LSP). Structural / graph queries replace dozens of grep+read cycles. Authors claim large token cuts vs file-by-file exploration (see sources; mark self-reported). Prefer this *instead of* blind full-repo greps when installed — still subject to MCP hygiene (don’t pile unrelated MCP servers beside it).
 - **[Graphify](https://github.com/Graphify-Labs/graphify)** (`Graphify-Labs/graphify`) — `/graphify` skill maps code (+ docs/PDFs/media) into a **queryable knowledge graph** so the agent can query the graph instead of grepping files. Code path: local tree-sitter AST (deterministic, no LLM credits for code map per README). Docs/media may use a semantic pass. Not a vector index. Install: `uv tool install graphifyy` then `graphify install`. No universal token-% in README — savings mechanism is fewer file crawls.
+- **Global build-output hook ([SwiftLee](https://www.avanderlee.com/ai-development/reduce-token-usage-claude-code-codex-cursor/), Antoine van der Lee, 28 Sep 2026)** — One `PreToolUse` hook script for Cursor, Claude Code and Codex. It appends `2>&1 | xcsift -f toon -w` to unfiltered `xcodebuild` / `swift build` / `swift test`. The Codex variant denies the raw command and returns the exact retry command. Reason: an `AGENTS.md` filter rule was skipped on 751 of 2,141 builds. Hooks enforce; instructions only suggest. Author audit of 1,674 Cursor sessions: 94.2% cache reads, 0.6% output. Author clean test run: ~406,500 → ~168 estimated tokens of *command output* (not a bill %). The same hook shape fits any noisy CLI. Rules: [EXAMPLE-PROMPTS](./EXAMPLE-PROMPTS.md#swiftlee-global-agent-rules-10-lines).
 
 **Graphify vs codebase-memory-mcp (feature comparison — Pong, 2026-09-17):**
 
@@ -227,6 +236,7 @@ Agents already log turns. These tools read those files:
 - **Claude Code OpenTelemetry** — `CLAUDE_CODE_ENABLE_TELEMETRY=1` plus OTEL exporters for token and cost metrics (needs a collector such as Grafana).
 - **Cache writes by lifetime (2.1.300):** The OpenTelemetry `api_request` event now has `cache_creation_5m_tokens` and `cache_creation_1h_tokens`. Use them to see which cache lifetime you pay to write.
 - **`/usage` warnings (2.1.299):** `/usage` now warns about max effort, workflows, always-on context, and large tool results. Check it before you add a new meter.
+- **Gateway sessions (Vercel AI Gateway):** The Sessions view shows cache hit rate, cost, models and providers per conversation, tagged by client (Claude Code, Codex, Cursor). Sort by cost; a long session with a low hit rate keeps paying to reread history. See Pattern 5.
 
 ### Experiments (A/B, not a live UI)
 
@@ -267,6 +277,8 @@ GUI agents burn tokens when **every** click goes through a frontier model + scre
 **Live web sibling:** [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) — page → indexed element table; Jev picks operation + target in **one** request; a small LLM writes text only on `TYPE_TEXT`; default loop has **no screenshots**. Author runtime/request counts (not a token-%) live on the Savings cheat sheet.
 
 **Details:** [CUA-S1 §10](./TYPESAFE-JEV.md#10-computer-use--specialist-system-one-for-local-gui-decisions-cua-s1) · [Jev Ultrafast §11](./TYPESAFE-JEV.md#11-browser-use-jev-ultrafast--indexed-dom--jev-optarget).
+
+**Screenshot pruning breaks cache:** Prune screenshots in batches, not at every step. See Pattern 5 (Asana).
 
 ## Case studies: one agent vs multi-agent
 
@@ -514,6 +526,30 @@ Summary figures that belong on the deck are also on the **Savings cheat sheet** 
 **Deck use:** cite as **measured caution** against installing “token saver” wrappers as automatic wins. Prefer replay-your-own-tasks. Do not present −49% Terra as fewer tokens.
 
 
+## Measured study: 12 Claude Code tips, 945 runs (Kensei, 2026)
+
+Headline figures are on the **Savings cheat sheet** (row: Kensei 945-run). This section holds setup, mechanism and limits.
+
+**Source:** X article “Stop Hitting Claude Code Limits: 7 Best Practices, Tested on 945 Runs” by [@0xKense1](https://x.com/0xKense1/status/2111105138290987198) (Kensei, 16 Oct 2026). Raw logs, harness and charts: [kenseii1/claude-code-limits-tests](https://github.com/kenseii1/claude-code-limits-tests) (MIT). Pointer: [@daniel_mac8](https://x.com/daniel_mac8/status/2111501909337210911) (Dan McAteer, 17 Oct). Small account; trust rests on the public raw logs.
+
+**Setup (author-reported):** A renamed copy of Flask (“Tessel”), so the model must open files. 10 “how does X work in this repo” questions with an answer key. A fresh `claude -p` per run with explicit `--model` and `--effort`. Arms paired per question, in shuffled order. Default: Sonnet 5.5, effort medium. Tokens from `modelUsage` (input, output, cache reads, cache writes, subagents). 118M tokens in total. Each figure has a 95% CI; a CI that crosses zero counts as “no clear effect”. Claude Code 2.1.296–2.1.301, 14–16 Oct 2026.
+
+**Where tokens go (author):** A bare “ok” cost 19,100 tokens before any file read. The average question cost ~110k tokens, while the last call held only ~24k. Each call resends the base plus everything read so far. 87% of tokens were cache reads; ~1% was the answer. So only two levers work: a smaller base, or less history carried.
+
+**Other findings (author):**
+- Flat notes map + “answer from the note” rule: 32% fewer tokens, but 2 of 20 answers wrong (a note missed a detail). Use only with maintained notes.
+- Name the file and function: 13% more tokens, but 20/20 right vs 8/20 for the vague prompt. A cheap wrong answer costs more.
+- Haiku 5.5 vs Sonnet 5.5 on lookups: 33% more tokens, about 12× cheaper per question at list price, same accuracy. How plan limits count this is not published.
+- Subagent for a test-suite diagnosis: no clear change in total. The main chat stayed smaller (22k vs 32k on the heavy task).
+- MCP connectors off: bare “ok” 1,691 tokens lighter; no clear effect on real questions (tools are deferred by default).
+- Deny rule on a vendor folder: kept searches out (13/20 → 1/20 runs). No token effect.
+- Caveman skill: fewer output tokens, no clear total cut. The short style faded after turn 2.
+- Obsidian notes via MCP vs plain files: +34% / +42% (smaller earlier test, not part of the 945).
+
+**Limits (author):** Mostly Sonnet 5.5. One Python repo. Code reading, not writing. Raw tokens, not the plan meter. 3 chains per session length.
+
+**Deck use:** Strongest public measurement so far for `/clear`, `/compact` and skills over CLAUDE.md. Also a measured caution: subagents, MCP-off and caveman did not cut totals here. Pairs with u/bisonbear2 (Codex): output-side tricks touch only ~1% of the bill. Measure-one-tip loop: [EXAMPLE-PROMPTS](./EXAMPLE-PROMPTS.md#kensei-measure-one-tip-loop).
+
 ## Library catalog: llm-engineer-toolkit
 
 Curated index of **120+ LLM libraries** by category — not a token-saver itself. Use it to **discover** tools that map onto this playbook.
@@ -555,7 +591,7 @@ For deck percentages, use the **Savings cheat sheet** above as the single number
 
 
 ---
-**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures; OpenAI cache customer figures stay labeled **customer-reported**; Corvoysier recall row stays **self-measured** n=3; AA effort $/task stays raw **third-party** with no derived %; FOCUS peak-context stays off this sheet; Haiku 5.5 average/list cuts and the Sonnet 5.5 cache-read note stay **vendor**; Command+K and Agent Planners stay **self-measured**; UT Austin latency and the in-paper Copilot cite stay off this sheet; StartLux-Decision author eval stays off this sheet; the Sojal “1/5th the cost” stays an author cost claim; idle compaction, the ToolSearch fix, the OTel cache-write split, `/usage` warnings, and Codex cache reuse stay **vendor, no %**). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-10-19. Source of truth: private GitHub `PongPong/token-savings-notes`.
+**Maintenance (weekly, Monday ~09:00 Europe/London):** Refresh X/web in [SOURCES.md](./SOURCES.md). Re-check metering tools, [TYPESAFE-JEV.md](./TYPESAFE-JEV.md), [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction), [laya-mlx](https://github.com/mizorewww/laya-mlx), the [Cursor harness efficiency post](https://cursor.com/blog/improved-token-efficiency), the [TinyFish context guide](https://www.tinyfish.ai/blog/claude-code-context-window), and the STE100 always-on caveat. Update the **Savings cheat sheet** only when new attributed figures appear (laya-mlx ms stay latency, not a token-%; Brad Groux Astra/Sol stays **no token-%**; JevBench composite / cal / latency stays off this sheet; Nimble holdout agreement / latency stays off this sheet; the SGLang scoring tutorial’s author latency stays off this sheet; TinyFish / ECC / context-mode % stay off this sheet as universal figures; OpenAI cache customer figures stay labeled **customer-reported**; Corvoysier recall row stays **self-measured** n=3; AA effort $/task stays raw **third-party** with no derived %; FOCUS peak-context stays off this sheet; Haiku 5.5 average/list cuts and the Sonnet 5.5 cache-read note stay **vendor**; Command+K and Agent Planners stay **self-measured**; UT Austin latency and the in-paper Copilot cite stay off this sheet; StartLux-Decision author eval stays off this sheet; the Sojal “1/5th the cost” stays an author cost claim; idle compaction, the ToolSearch fix, the OTel cache-write split, `/usage` warnings, and Codex cache reuse stay **vendor, no %**; Kensei 945-run figures stay **self-measured** (code-reading questions, mostly Sonnet 5.5); Asana 29× / 76× stay **company-measured** vs the original setup (76× includes a model change); SwiftLee audit counts stay **author audit**, not a bill %; Vercel session affinity stays **vendor, no %**). Keep companions + thin `guides/` in sync (map rows only — no tip duplication). `EXAMPLE-PROMPTS.md`, `ORCH-CASES.md`, `SPEAKER-NOTES.md`. Last edit: 2026-10-19. Source of truth: private GitHub `PongPong/token-savings-notes`.
 
 ## Gaps
 
