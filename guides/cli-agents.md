@@ -13,6 +13,8 @@ Follow NOTES **Do this week** exactly (MCP off, clear/compact, meter, dense+form
 - Claude Code: learn `/rewind` vs `/compact` vs `/clear`; tune `/autocompact` if you miss manual compact. See [MAP](./MAP.md) P6.
 - Claude Code on Bedrock/Vertex/Foundry/gateway: 1M is default — opt out via `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` or `/autocompact 200k` (per model). See [MAP](./MAP.md) P6.
 - API billing on Haiku: `/model haiku` then `/autocompact 100k` (per model, including Haiku subagents). See [MAP](./MAP.md) P3 and P6.
+- Claude Code idle compaction (2.1.299+): long idle sessions auto-compact. Turn it off in `/config` when full detail matters. See [MAP](./MAP.md) P6.
+- Claude Code meter: check `/usage` warnings; OTel users split cache writes by 5m / 1h. See NOTES Meter.
 
 ## How to use the map
 
@@ -30,4 +32,4 @@ CLI column of [MAP.md](./MAP.md) = the action. NOTES = the why and the attribute
 
 Add scout deltas to **SOURCES** and pattern/cheat-sheet changes to **NOTES** once. Touch this guide only for new **CLI levers** (new slash command, mode name). Ban twin copies of quotes/%.
 
-Last edit: 2026-10-12.
+Last edit: 2026-10-19.
