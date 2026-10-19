@@ -663,3 +663,34 @@ Return a spec { root, elements }. Each element has type, props, children.
 Use only listed types. Prefer the smallest spec that solves the ask.
 ```
 
+### SwiftLee global agent rules (10 lines)
+
+**Source:** [Antoine van der Lee, “How to reduce token usage in Claude Code, Codex, and Cursor”](https://www.avanderlee.com/ai-development/reduce-token-usage-claude-code-codex-cursor/) (28 Sep 2026). Author keeps these in one global file: Claude Code `~/.claude/CLAUDE.md` (imports it), Codex `~/.codex/AGENTS.md` (symlink), Cursor User Rules. Swift-specific lines (Simulator, Apple frameworks) — swap for your stack. **No savings %.** Why: NOTES Pattern 4 / 8.
+
+```markdown
+# Token-efficient agent work
+
+- Search first, then read only the lines you need. Don't re-read a file you already have unless it changed.
+- Run the narrowest test first (`-only-testing:` or `--filter`). Run the full suite once, at the end.
+- Wait inside one command (`gh run watch`, `gh pr checks --watch`, an `until` loop) instead of repeated sleep-and-check turns.
+- Inspect the Simulator through its accessibility tree (for example, the RocketSim CLI). Take a screenshot only to verify visuals.
+- Load a skill only when the task needs it. Never load two skills that cover the same framework.
+- Give search and exploration subagents a small, fast model. Keep the main model for decisions and edits.
+- Before adding code, check whether this codebase, the Swift standard library, or an Apple framework already solves it. Then write the smallest change that works, without dropping validation, error handling, or accessibility.
+- Lead with the result. Skip restating the plan and narrating tool calls, but keep sentences complete.
+- After two failed attempts at the same fix, stop and report what you learned instead of looping.
+- Delegate self-contained searches and investigations to a subagent so their reads stay out of this conversation. When the user switches to an unrelated task, suggest a new chat with a short handoff note.
+```
+
+### Kensei measure-one-tip loop
+
+**Source:** [Kensei 945-run study](https://x.com/0xKense1/status/2111105138290987198) ([repo](https://github.com/kenseii1/claude-code-limits-tests)). Run one question five times, change one thing, run again. Compare medians. Counts `modelUsage` (includes subagents), not the top-level `usage` field. Needs `jq`. Why: [NOTES study](./NOTES.md#measured-study-12-claude-code-tips-945-runs-kensei-2026).
+
+```bash
+# same question, 5 runs, prints total tokens per run (needs jq)
+Q="In this repo, where is the main entry point and what does it call first? Be brief."
+for i in 1 2 3 4 5; do
+  claude -p "$Q" --output-format json \
+  | jq '[.modelUsage[] | .inputTokens + .outputTokens + .cacheReadInputTokens + .cacheCreationInputTokens] | add'
+done
+```
