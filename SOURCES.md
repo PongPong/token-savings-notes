@@ -91,6 +91,8 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 | @thsottiaux (Tibo) — Codex cache kept for logged-in users | https://x.com/thsottiaux/status/2112712984644784534 · CN pointer https://x.com/hezzotk/status/2112715674971939127 | **21 Oct 2026** 02:10 Europe/London: “You can now cache for 12h in the API and for logged in users across Codex & Work we keep cache forever and you don’t have any penalty for coming back to an old conversation or resuming after a few hours and are now guaranteed to hit the cache.” | **Vendor, no %** |
 | OpenUI Lang (Thesys) — token benchmark | https://github.com/thesysdev/openui · https://www.openui.com/docs/openui-lang/benchmarks · CN pointer https://x.com/Miamaomimia/status/2112797957690929384 | 7 scenarios, GPT-5.2 temp 0, `tiktoken` gpt-5 encoder; other formats are projections of the same parsed output. TOTAL tokens: YAML 9,122 · Vercel JSON-Render 10,180 · Thesys C1 JSON 9,948 · OpenUI Lang 4,800 (“-52.8%” vs Vercel). | **Vendor-measured** output-format tokens — not a session % |
 | NVIDIA — Nemotron 3.5 Embed, Rerank, and Parse (HF blog) · @jerryjliu0 | https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval · [Parse model card](https://huggingface.co/nvidia/Nemotron-3.5-Parse) · [ParseBench](https://www.parsebench.ai/) · https://x.com/jerryjliu0/status/2113008819328700439 | Blog, **21 Oct 2026**: “An agent’s answers depend on the evidence it can retrieve. When that evidence is incomplete or irrelevant, the agent will repeat searches and inspect additional documents, consuming more inference tokens before completing the task.” “Adding Nemotron 3.5 Rerank reduces agentic token cost per query by approximately 14% with Nemotron 3.5 Embed 8B, and 13% with Nemotron 3.5 Embed 1B, while improving retrieval accuracy in both configurations.” Parse: **631M** parameters; ParseBench **75.20**, **#1 among models with fewer than 1 billion parameters** (as of 10/20/2026), **10.5 pages/s** on one H100 (vendor). Parse card: OpenMDW-1.1, “ready for commercial or non-commercial use.” Jerry Liu (LlamaIndex CEO; ParseBench is LlamaIndex’s benchmark), 21 Oct 2026 21:45 Europe/London: “Nemotron 3.5 Parse takes the #1 spot on ParseBench… The full list consists of 150+ frontier models, open-weight models, and specialized solutions.” NVIDIA’s blog states the narrower sub-1B #1; the live leaderboard did not render for this check. | **Vendor-measured** ~14% / ~13% agent tokens per query (rerank, NVIDIA pipeline) — **not** on the cheat sheet; ParseBench rank = parsing quality, **not** a token-% |
+| Anthropic — Maximizing the value of your Claude Code sessions (article + webinar, Lydia Hallie) | https://claude.com/resources/articles/maximizing-the-value-of-your-claude-code-sessions · https://claude.com/resources/webinars/claude-code-maximizing-value · pointer https://x.com/0xKense1/status/2112970619516035198 | “`/compact` before you take a break from your keyboard. The prompt cache expires after an hour, and summarizing a conversation is much cheaper while it's still cached.” · “@-mentioning it again on a later turn generally attaches a second copy.” | **Vendor guidance, no %.** NOTES P5 / P8 |
+| Cruq AI — Your agent was paying for the same prompt on every turn | https://www.cruq.ai/blog/your-agent-was-paying-for-the-same-prompt-every-turn | **21 Oct 2026.** “That's 62% less on a first run and 74% less on a repeat.” (one agent, three runs, Sonnet 4.5) | **Self-measured**, tiny test; not cheat-sheet. NOTES P5 |
 
 ---
 
@@ -164,6 +166,8 @@ Canonical **numbers** for the deck live in NOTES **Savings cheat sheet** — do 
 - [@lydiahallie — idle compaction](https://x.com/lydiahallie/status/2110484840256819380) — 14 Oct 2026 — **staff explainer**, no %
 - [@thsottiaux (Tibo) — Codex context reuse + longer cache](https://x.com/thsottiaux/status/2111244596131111253) — 16 Oct 2026 (UTC) — **vendor**, no %
 - [Nemotron 3.5 Embed, Rerank, and Parse · NVIDIA / HF blog](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval) — 21 Oct 2026 — vendor; rerank ~14% / ~13% agent tokens per query (**vendor-measured**); Parse 631M, OpenMDW-1.1. Pointer [@jerryjliu0](https://x.com/jerryjliu0/status/2113008819328700439). [ParseBench](https://www.parsebench.ai/) (LlamaIndex)
+- [Maximizing the value of your Claude Code sessions · Anthropic](https://claude.com/resources/articles/maximizing-the-value-of-your-claude-code-sessions) · [webinar](https://claude.com/resources/webinars/claude-code-maximizing-value) — vendor guidance, no %
+- [Your agent was paying for the same prompt on every turn · Cruq AI](https://www.cruq.ai/blog/your-agent-was-paying-for-the-same-prompt-every-turn) — 21 Oct 2026 — **self-measured** (one 3-run test)
 
 ## X primary delta (17 Sep 2026 browser pass)
 
@@ -268,7 +272,7 @@ Window ~2026-10-05 → 2026-10-12. Two late catches (26 Sep UT Austin; 2 Oct Age
 - N5 — [Agent Planners](https://www.agentplanners.com/blog/mcp-server-too-many-tools-on-demand-discovery) (2 Oct, late catch): server-side search/describe/call. **Self-measured**. NOTES P1; MAP P1.
 - N4 — UT Austin [arXiv 2609.32961](https://arxiv.org/abs/2609.32961) (26 Sep, late catch): fewer tokens need not mean faster or cheaper. **Research**; pair with FOCUS under Pattern 7. Copilot shares in the intro are a **third-party production cite inside the paper**, not our measurement. **Not** cheat sheet. No MAP lever.
 
-**Still backlog:** Arena/Berkeley HarnessTax, PointFive, Paritok, Hallie “Maximizing Claude Code sessions” (14 Aug), @markvalorian idleCompaction (no CHANGELOG primary this pass), @Joshua_WD 1-hour cache caveats (primary 404).
+**Still backlog:** Arena/Berkeley HarnessTax, PointFive, Paritok, @markvalorian idleCompaction (no CHANGELOG primary this pass), @Joshua_WD 1-hour cache caveats (primary 404).
 
 ## Web/X primary (17 Oct 2026)
 
@@ -371,6 +375,17 @@ Window ~21 Oct 09:00 → 18:00 Europe/London. X MCP worked (EN + CN). Three adds
 - [@jerryjliu0](https://x.com/jerryjliu0/status/2113008819328700439) (Jerry Liu, LlamaIndex CEO), 21 Oct 2026: Nemotron 3.5 Parse tops ParseBench and stays under 1B parameters. Primary: [NVIDIA HF blog](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval) and the [Parse model card](https://huggingface.co/nvidia/Nemotron-3.5-Parse). Token angle is in the blog, not the post: rerank cut agent tokens per query ~14% / ~13% (**vendor-measured**). NOTES P8; MAP P8. Browser: N/A.
 - Rank wording: Jerry says #1 on ParseBench (150+ entries). NVIDIA says #1 among sub-1B models (75.20, as of 20 Oct). Both attributed; the leaderboard is JS-only and was not checked. Rank is parsing quality, not a token-%.
 - Skipped: Embed nDCG, multilingual, NVFP4 throughput, and fine-tune gains (retrieval quality, not token use). The GTC Berlin shout-out (no token content).
+- No new cheat-sheet rows.
+
+---
+
+## Web/X primary (22 Oct 2026, weekday scout AM)
+
+Window ~21 Oct 18:00 → 22 Oct 09:00 Europe/London. X MCP worked (EN + CN). Two adds, both checked against primary sources.
+
+- Anthropic “Maximizing the value of your Claude Code sessions” ([article](https://claude.com/resources/articles/maximizing-the-value-of-your-claude-code-sessions), [webinar](https://claude.com/resources/webinars/claude-code-maximizing-value); pointer [@0xKense1](https://x.com/0xKense1/status/2112970619516035198)). Was backlog; the webinar is now on demand. **Vendor, no %.** NOTES P5 + P8; MAP P5 / P8.
+- Cruq AI two cache markers ([blog](https://www.cruq.ai/blog/your-agent-was-paying-for-the-same-prompt-every-turn)). **Self-measured**, one 3-run test. NOTES P5; MAP P5.
+- Skipped: SpanDock idle-compaction post (example numbers, not measured; feature already in NOTES P6). Claude Code 2.1.305–2.1.307 (fixes only: thrash, gateway header, many-MCP compaction; no new lever). OpenAI Agents API compaction / tool search (DevDay recap, no token detail yet). MonkeysCode “Pi 1.0 cuts tokens 40%” (promo, no method). CN 12h-cache explainer @ai_suxiaole (fact already in NOTES P5 with CN pointer). CN token-volume brag posts (not a saving).
 - No new cheat-sheet rows.
 
 ---
