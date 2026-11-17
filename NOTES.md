@@ -416,6 +416,8 @@ GUI agents burn tokens when **every** click goes through a frontier model + scre
 
 **Send only what changed ([agent-browser](https://github.com/vercel-labs/agent-browser), Vercel Labs, v0.38.0):** `snapshot --delta` returns the full accessibility tree once, then `unchanged` or a compact structural delta. It falls back to full state after a URL change. `--delta --full` refreshes the baseline, for example when compaction dropped the earlier tree. `screenshot --if-changed` skips unchanged captures. `--delta` resets between sessions. For checks hours apart, save a snapshot and run `diff snapshot --baseline <file>`. Maintainer demo: 73× fewer tokens filling one form (**author demo**, not a bill %). [Post](https://x.com/ctatedev/status/2111930462176432333).
 
+**Desktop accessibility tree ([agent-desktop](https://github.com/vercel-labs/agent-desktop), Vercel Labs):** reads the OS accessibility tree instead of screenshots (**vendor README**, no %). See the [16 Nov 2026 GitHub AI tools roundup](./radar/ai-tools-github-2026-11-16.md).
+
 ## Case studies: one agent vs multi-agent
 
 When to use one agent vs multi-agent (and which combo). Full cases and sources:

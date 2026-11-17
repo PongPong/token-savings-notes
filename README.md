@@ -32,6 +32,14 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 | [TYPESAFE-JEV.md](./TYPESAFE-JEV.md) | TypeSafe Jev (+ open-weights Laya; Apple Silicon [laya-mlx](https://github.com/mizorewww/laya-mlx); [decision-backend landscape](./TYPESAFE-JEV.md#alternatives-landscape-decision-backends); CUA-S1 / Jev Ultrafast) |
 | [SPEAKER-NOTES.md](./SPEAKER-NOTES.md) | Short talk track |
 
+## Roundups
+
+One-off lists. They are not a second copy of the core patterns.
+
+| File | Role |
+| --- | --- |
+| [radar/ai-tools-github-2026-11-16.md](./radar/ai-tools-github-2026-11-16.md) | Ten GitHub AI tools from [@themianoo](https://x.com/themianoo/status/2122293999096779181) (16 Nov 2026), sorted by stars |
+
 ## Weekly refresh (Monday ~09:00 Europe/London)
 
 1. New X/web tips → **SOURCES.md** only (credible accounts; include CN-language when useful).
@@ -42,4 +50,4 @@ Both doors share one **core**. The pattern map (browser action vs CLI action vs 
 
 Scout rules: creditable X only; not eng-only; include Chinese users; no invented %.
 
-Last edit: 2026-11-16.
+Last edit: 2026-11-17.
