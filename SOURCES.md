@@ -814,6 +814,16 @@ Window ~20 Nov 09:30 → 18:40 Europe/London. X MCP worked (EN + CN). Summarised
 - Skipped: Antigravity / Google AI Ultra billing audit "49.5M tokens overcharged" (@MirrortekUK relay; one user's local logs, not verified; held). turbo-browser-mcp "93.4% fewer tokens" (@Viho_Huangg; author self-benchmark, 132-star repo; batched browser actions already in NOTES Computer-use). AgentRun "$0.89 → $0.12" (@harisanthosh9; no method in repo post). AHTML "~47% fewer tokens" (@dibbayajyoti; 91-follower author, 20 questions). keepalive plugin renews cache instead of idle compaction (@4amPokerFace; personal plugin, no figures). Gemini 4 Neon "32% cheaper per task than Carbon" relays (Neon cost already NOTES P3). Codex 0.171.0 statusline token/cost fields (already logged). Claude Code: no release after 2.1.329. Held items @bebuu_ai, FrontierHarness v1.1, Jaseci: no new primary source.
 - No new cheat-sheet rows.
 
+## Web/X primary (26 Nov 2026, weekday scout AM)
+
+Window ~25 Nov 18:30 to 26 Nov 09:20 Europe/London. X MCP worked (EN + CN). Summarised by hand. Figures checked against the primary pages.
+
+- Agent-Native Computer Use ([project page](https://mit-mi.github.io/Agent-Native-Computer-Use/), Yinzhen Huang, Ao Qu and others, MIT / REA team, Nov 2026; [code](https://github.com/MIT-MI/Agent-Native-Computer-Use-Code)). Agent builds an MCP server from FreeCAD binaries. Five tasks: 3.1M vs 127.1M tokens, 4.5 vs 180.6 min, all checks vs 40% average; lid-vent 0.64M vs 22.2M. Build time excluded. **Research self-reported.** NOTES P-CU; MAP P-CU.
+- Argent v0.35.0 ([release](https://github.com/software-mansion/argent/releases/tag/v0.35.0), Software Mansion, 25 Nov 2026; post [@argent_ai_](https://x.com/argent_ai_/status/2125873674255253724), 26 Nov). Note for unchanged tree or screenshot; line diffs; full-tree fallbacks (over 60% diff, 3 short in a row, over 5 min). "~25% fewer tokens" is a post claim with no method. **Vendor.** NOTES P-CU; MAP P-CU.
+- Mellum2.1 Instruct ([JetBrains blog](https://blog.jetbrains.com/ai/2026/11/mellum2-1-instruct-is-out-bringing-faster-answers-for-coding-agents/), 25 Nov 2026; [Hugging Face](https://huggingface.co/JetBrains/Mellum2.1-12B-A2.5B-Instruct); pointer [@Yashpatil](https://x.com/Yashpatil/status/2125859742627266793)). About half as many tokens as Mellum2.1 Thinking on agentic coding tasks, near-equal SWE-bench Verified. The "45%" in posts is not in the blog text (chart not checked). **Vendor-measured.** NOTES P3; MAP P3.
+- Skipped: Google Workspace agent access via MCP only (Workspace Updates, 24 Nov; CN pointer @slgthinking): access policy; "summaries save tokens" has no figure. koed memory layer "69% fewer tokens" (@subhtly relay; hosted catch, no method). "85% fewer tokens, 49% to 74%" fewer-tools post (@qenluo relay of @Kisalay_; primary not linked). Claude Code Code Mode and `/usage` fix posts (already in NOTES P7 / Meter). flashbrowse (latency, already skipped).
+- No new cheat-sheet rows.
+
 ## Web/X primary (25 Nov 2026, weekday scout PM)
 
 Window ~25 Nov 09:20 → 18:30 Europe/London. X MCP worked (EN + CN). Summarised by hand. Figures checked against the primary pages.
