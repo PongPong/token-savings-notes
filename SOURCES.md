@@ -814,6 +814,15 @@ Window ~20 Nov 09:30 → 18:40 Europe/London. X MCP worked (EN + CN). Summarised
 - Skipped: Antigravity / Google AI Ultra billing audit "49.5M tokens overcharged" (@MirrortekUK relay; one user's local logs, not verified; held). turbo-browser-mcp "93.4% fewer tokens" (@Viho_Huangg; author self-benchmark, 132-star repo; batched browser actions already in NOTES Computer-use). AgentRun "$0.89 → $0.12" (@harisanthosh9; no method in repo post). AHTML "~47% fewer tokens" (@dibbayajyoti; 91-follower author, 20 questions). keepalive plugin renews cache instead of idle compaction (@4amPokerFace; personal plugin, no figures). Gemini 4 Neon "32% cheaper per task than Carbon" relays (Neon cost already NOTES P3). Codex 0.171.0 statusline token/cost fields (already logged). Claude Code: no release after 2.1.329. Held items @bebuu_ai, FrontierHarness v1.1, Jaseci: no new primary source.
 - No new cheat-sheet rows.
 
+## Web/X primary (27 Nov 2026, weekday scout PM)
+
+Window ~27 Nov 09:20 → 18:20 Europe/London. X MCP worked (EN + CN). Summarised by hand. Figures checked against the primary pages.
+
+- DeepSeek deferred tool loading ([docs, Tool Calls](https://api-docs.deepseek.com/zh-cn/guides/tool_calls), CN; pointer [@Smlay_ero](https://x.com/Smlay_ero/status/2126325413685379516)). `defer_loading` / `tool_search`; `deepseek-flash` only; cache prefix kept. NOTES P1.
+- DeepSeek chat per-turn token bill (gray test; [IT之家](https://www.ithome.com/1/033/157.htm), [界面新闻](https://www.jiemian.com/article/15381943.html), 27 Nov 2026; CN pointers [@BaiZhongzh20198](https://x.com/BaiZhongzh20198/status/2126249402235031610), [@redstone1108](https://x.com/redstone1108/status/2126323605197988028)). Reported screenshot. NOTES Meter.
+- Skipped: jCodeMunch MCP "~96% fewer tokens per lookup" ([@hsianghui](https://x.com/hsianghui/status/2126305684958634403); self-reported, no method checked). FrontierHarness Kimi K3 "17.5x" relays (already NOTES P7). Compaction summaries in the user role break request-derived authorizers (security, not tokens). Repeat Anthropic tool-use / MCP code-execution hype posts (already NOTES P1). Opus 5.6 rumours (no vendor source).
+- No new cheat-sheet rows.
+
 ## Web/X primary (27 Nov 2026, weekday scout AM)
 
 Window ~26 Nov 18:30 to 27 Nov 09:20 Europe/London. X MCP worked (EN + CN). Summarised by hand. Figures checked against the primary pages.

@@ -12,7 +12,7 @@ No MCP, no `AGENTS.md`, no `/compact`, no CLI formatters.
 3. **Pick the cheap model first** — frontier only when the ask is hard (P3).
 4. **Paste less** — failing error slice, not the whole log (P7/P8).
 5. **Ask for short answers** — bullets / STE100 / “no preamble” (P9). Simplify after the hard answer, not as always-on.
-6. **Check usage in the product UI** — don’t retype “how many tokens?” every turn (see NOTES Meter for CLI meters; browser = vendor usage page).
+6. **Check usage in the product UI** — don’t retype “how many tokens?” every turn (see NOTES Meter for CLI meters; browser = vendor usage page; DeepSeek web/app shows a per-turn token card in a gray test, NOTES Meter).
 
 ## How each big idea shows up here
 
